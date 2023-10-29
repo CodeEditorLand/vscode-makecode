@@ -1,12 +1,9 @@
 {
   "name": "pxt-vscode-web",
-  "publisher": "ms-edu",
   "displayName": "Microsoft MakeCode Arcade",
-  "description": "Make games and learn code. Create retro arcade style video games, art, and music inside VS Code.",
   "version": "0.0.1",
-  "engines": {
-    "vscode": "1.75.0"
-  },
+  "private": "false",
+  "description": "Make games and learn code. Create retro arcade style video games, art, and music inside VS Code.",
   "categories": [
     "Education"
   ],
@@ -17,19 +14,42 @@
     "learn",
     "student"
   ],
-  "icon": "media/logo-128x128.png",
-  "preview": true,
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "bugs": {
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
   },
-  "activationEvents": [
-    "onCommand:makecode.create",
-    "workspaceContains:./pxt.json",
-    "onFileSystem:mkcdfs"
-  ],
+  "license": "MIT",
+  "author": {
+    "name": "Nikola Hristov",
+    "email": "nikola@nikolahristov.tech",
+    "url": "https://nikolahristov.tech"
+  },
+  "publisher": "playform",
+  "type": "module",
   "browser": "./dist/web/extension.js",
+  "scripts": {
+    "compile-web": "webpack",
+    "generate-l10n": "vscode-l10n-dev export --outDir ./l10n ./src",
+    "generate-l10n-ploc": "vscode-l10n-dev generate-pseudo -o ./l10n ./l10n/bundle.l10n.json ./package.nls.json",
+    "lint": "eslint src --ext ts",
+    "package-web": "webpack --mode production --devtool hidden-source-map",
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts",
+    "run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=.",
+    "pretest": "yarn run compile-web",
+    "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
+    "vscode:prepublish": "yarn run package-web",
+    "watch-web": "webpack --watch"
+  },
   "contributes": {
+    "breakpoints": [
+      {
+        "language": "typescript"
+      }
+    ],
     "commands": [
       {
         "command": "makecode.build",
@@ -160,52 +180,34 @@
         "category": "%makecode.category.title%"
       }
     ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "asset-explorer",
-          "title": "%makecode.assetExplorer.title%",
-          "icon": "media/logo.svg"
+    "configuration": {
+      "title": "MakeCode Arcade",
+      "properties": {
+        "makecode.showCompileNotification": {
+          "type": "boolean",
+          "default": true,
+          "description": "%makecode.configuration.showCompileDescription%"
+        },
+        "makecode.simulatorBuildWatcherDebounce": {
+          "type": "number",
+          "default": 1500,
+          "description": "%makecode.configuration.simWatcherDebounceDescription%"
         }
-      ]
+      }
     },
-    "views": {
-      "asset-explorer": [
-        {
-          "id": "makecodeActions",
-          "name": "%makecode.actionsExplorer.title%",
-          "icon": "media/logo.svg"
-        },
-        {
-          "id": "imageExplorer",
-          "name": "%makecode.imageExplorer.title%",
-          "icon": "media/logo.svg"
-        },
-        {
-          "id": "animationExplorer",
-          "name": "%makecode.animationExplorer.title%",
-          "icon": "media/logo.svg"
-        },
-        {
-          "id": "tileExplorer",
-          "name": "%makecode.tileExplorer.title%",
-          "icon": "media/logo.svg"
-        },
-        {
-          "id": "tilemapExplorer",
-          "name": "%makecode.tilemapExplorer.title%",
-          "icon": "media/logo.svg"
-        },
-        {
-          "id": "songExplorer",
-          "name": "%makecode.songExplorer.title%",
-          "icon": "media/logo.svg"
-        }
-      ]
-    },
-    "breakpoints": [
+    "languages": [
       {
-        "language": "typescript"
+        "id": "json",
+        "extensions": [
+          ".jres",
+          ".g.jres"
+        ]
+      },
+      {
+        "id": "html",
+        "extensions": [
+          ".blocks"
+        ]
       }
     ],
     "menus": {
@@ -291,35 +293,48 @@
         }
       ]
     },
-    "languages": [
-      {
-        "id": "json",
-        "extensions": [
-          ".jres",
-          ".g.jres"
-        ]
-      },
-      {
-        "id": "html",
-        "extensions": [
-          ".blocks"
-        ]
-      }
-    ],
-    "configuration": {
-      "title": "MakeCode Arcade",
-      "properties": {
-        "makecode.showCompileNotification": {
-          "type": "boolean",
-          "default": true,
-          "description": "%makecode.configuration.showCompileDescription%"
+    "views": {
+      "asset-explorer": [
+        {
+          "id": "makecodeActions",
+          "name": "%makecode.actionsExplorer.title%",
+          "icon": "media/logo.svg"
         },
-        "makecode.simulatorBuildWatcherDebounce": {
-          "type": "number",
-          "default": 1500,
-          "description": "%makecode.configuration.simWatcherDebounceDescription%"
+        {
+          "id": "imageExplorer",
+          "name": "%makecode.imageExplorer.title%",
+          "icon": "media/logo.svg"
+        },
+        {
+          "id": "animationExplorer",
+          "name": "%makecode.animationExplorer.title%",
+          "icon": "media/logo.svg"
+        },
+        {
+          "id": "tileExplorer",
+          "name": "%makecode.tileExplorer.title%",
+          "icon": "media/logo.svg"
+        },
+        {
+          "id": "tilemapExplorer",
+          "name": "%makecode.tilemapExplorer.title%",
+          "icon": "media/logo.svg"
+        },
+        {
+          "id": "songExplorer",
+          "name": "%makecode.songExplorer.title%",
+          "icon": "media/logo.svg"
         }
-      }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "asset-explorer",
+          "title": "%makecode.assetExplorer.title%",
+          "icon": "media/logo.svg"
+        }
+      ]
     },
     "viewsWelcome": [
       {
@@ -328,18 +343,17 @@
       }
     ]
   },
-  "scripts": {
-    "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
-    "pretest": "yarn run compile-web",
-    "vscode:prepublish": "yarn run package-web",
-    "compile-web": "webpack",
-    "watch-web": "webpack --watch",
-    "package-web": "webpack --mode production --devtool hidden-source-map",
-    "lint": "eslint src --ext ts",
-    "run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=.",
-    "generate-l10n": "vscode-l10n-dev export --outDir ./l10n ./src",
-    "generate-l10n-ploc": "vscode-l10n-dev generate-pseudo -o ./l10n ./l10n/bundle.l10n.json ./package.nls.json",
-    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
+  "activationEvents": [
+    "onCommand:makecode.create",
+    "workspaceContains:./pxt.json",
+    "onFileSystem:mkcdfs"
+  ],
+  "dependencies": {
+    "@types/path-browserify": "1.0.1",
+    "@vscode/extension-telemetry": "0.8.5",
+    "makecode-browser": "1.2.1",
+    "makecode-core": "1.4.3",
+    "path-browserify": "1.0.1"
   },
   "devDependencies": {
     "@types/mocha": "10.0.3",
@@ -354,32 +368,18 @@
     "mocha": "10.2.0",
     "process": "0.11.10",
     "ts-loader": "9.5.0",
-    "typescript": "5.2.2",
-    "webpack": "5.89.0",
-    "webpack-cli": "5.1.4",
     "tslib": "2.6.2",
-    "typescript-esbuild": "0.3.1"
+    "typescript": "5.2.2",
+    "typescript-esbuild": "0.3.1",
+    "webpack": "5.89.0",
+    "webpack-cli": "5.1.4"
   },
-  "dependencies": {
-    "@types/path-browserify": "1.0.1",
-    "@vscode/extension-telemetry": "0.8.5",
-    "makecode-browser": "1.2.1",
-    "makecode-core": "1.4.3",
-    "path-browserify": "1.0.1"
+  "engines": {
+    "vscode": "1.75.0"
   },
-  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-  "bugs": {
-    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-  },
-  "license": "MIT",
-  "type": "module",
-  "private": "false",
   "publishConfig": {
     "access": "public"
   },
-  "author": {
-    "name": "Nikola Hristov",
-    "email": "nikola@nikolahristov.tech",
-    "url": "https://nikolahristov.tech"
-  }
+  "icon": "media/logo-128x128.png",
+  "preview": true
 }
