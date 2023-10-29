@@ -3,7 +3,7 @@
   "publisher": "ms-edu",
   "displayName": "Microsoft MakeCode Arcade",
   "description": "Make games and learn code. Create retro arcade style video games, art, and music inside VS Code.",
-  "version": "1.0.1",
+  "version": "0.0.1",
   "engines": {
     "vscode": "1.75.0"
   },
@@ -21,7 +21,7 @@
   "preview": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode-makecode"
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
   },
   "activationEvents": [
     "onCommand:makecode.create",
@@ -338,7 +338,8 @@
     "lint": "eslint src --ext ts",
     "run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=.",
     "generate-l10n": "vscode-l10n-dev export --outDir ./l10n ./src",
-    "generate-l10n-ploc": "vscode-l10n-dev generate-pseudo -o ./l10n ./l10n/bundle.l10n.json ./package.nls.json"
+    "generate-l10n-ploc": "vscode-l10n-dev generate-pseudo -o ./l10n ./l10n/bundle.l10n.json ./package.nls.json",
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
   },
   "devDependencies": {
     "@types/mocha": "10.0.3",
@@ -356,7 +357,8 @@
     "typescript": "5.2.2",
     "webpack": "5.89.0",
     "webpack-cli": "5.1.4",
-    "tslib": "2.6.2"
+    "tslib": "2.6.2",
+    "typescript-esbuild": "0.3.1"
   },
   "dependencies": {
     "@types/path-browserify": "1.0.1",
@@ -364,5 +366,20 @@
     "makecode-browser": "1.2.1",
     "makecode-core": "1.4.3",
     "path-browserify": "1.0.1"
+  },
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "bugs": {
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+  },
+  "license": "MIT",
+  "type": "module",
+  "private": "false",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "Nikola Hristov",
+    "email": "nikola@nikolahristov.tech",
+    "url": "https://nikolahristov.tech"
   }
 }
