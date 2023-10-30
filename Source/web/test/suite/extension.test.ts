@@ -8,41 +8,41 @@ suite("Web Extension Test Suite", () => {
 
 	suite("insertGeneratedFile", () => {
 		test("next to existing file", () => {
-			const files = [
+			const files = ["a.ts", "images.g.jres", "b.ts"];
+			insertGeneratedFile(files, "images.g.ts");
+			assert.deepStrictEqual(files, [
 				"a.ts",
 				"images.g.jres",
-				"b.ts"
-			];
-			insertGeneratedFile(files, "images.g.ts");
-			assert.deepStrictEqual(files, ["a.ts", "images.g.jres", "images.g.ts", "b.ts"]);
+				"images.g.ts",
+				"b.ts",
+			]);
 		});
 
 		test("after all generated files", () => {
-			const files = [
+			const files = ["a.ts", "b.g.jres", "c.g.ts", "d.ts"];
+			insertGeneratedFile(files, "images.g.ts");
+			assert.deepStrictEqual(files, [
 				"a.ts",
 				"b.g.jres",
 				"c.g.ts",
-				"d.ts"
-			];
-			insertGeneratedFile(files, "images.g.ts");
-			assert.deepStrictEqual(files, ["a.ts", "b.g.jres", "c.g.ts", "images.g.ts", "d.ts"]);
+				"images.g.ts",
+				"d.ts",
+			]);
 		});
 
 		test("after jres files", () => {
-			const files = [
+			const files = ["a.ts", "b.jres", "c.ts"];
+			insertGeneratedFile(files, "images.g.ts");
+			assert.deepStrictEqual(files, [
 				"a.ts",
 				"b.jres",
-				"c.ts"
-			];
-			insertGeneratedFile(files, "images.g.ts");
-			assert.deepStrictEqual(files, ["a.ts", "b.jres", "images.g.ts", "c.ts"]);
+				"images.g.ts",
+				"c.ts",
+			]);
 		});
 
 		test("at beginning of list", () => {
-			const files = [
-				"a.ts",
-				"b.ts"
-			];
+			const files = ["a.ts", "b.ts"];
 			insertGeneratedFile(files, "images.g.ts");
 			assert.deepStrictEqual(files, ["images.g.ts", "a.ts", "b.ts"]);
 		});
