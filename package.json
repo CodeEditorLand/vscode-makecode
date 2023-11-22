@@ -2,12 +2,24 @@
   "name": "pxt-vscode-web",
   "displayName": "Microsoft MakeCode Arcade",
   "version": "0.0.1",
+  "private": "false",
   "description": "Make games and learn code. Create retro arcade style video games, art, and music inside VS Code.",
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "bugs": {
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
   },
+  "license": "MIT",
+  "author": {
+    "name": "Nikola Hristov",
+    "email": "nikola@nikolahristov.tech",
+    "url": "https://nikolahristov.tech"
+  },
   "publisher": "playform",
+  "type": "module",
   "browser": "./dist/web/extension.js",
   "scripts": {
     "compile-web": "webpack",
@@ -15,12 +27,12 @@
     "generate-l10n-ploc": "vscode-l10n-dev generate-pseudo -o ./l10n ./l10n/bundle.l10n.json ./package.nls.json",
     "lint": "eslint src --ext ts",
     "package-web": "webpack --mode production --devtool hidden-source-map",
+    "prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
     "run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=.",
     "pretest": "yarn run compile-web",
     "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
     "vscode:prepublish": "yarn run package-web",
-    "watch-web": "webpack --watch",
-    "prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'"
+    "watch-web": "webpack --watch"
   },
   "contributes": {
     "breakpoints": [
@@ -347,25 +359,13 @@
     "ts-loader": "9.5.1",
     "tslib": "2.6.2",
     "typescript": "5.3.2",
+    "typescript-esbuild": "0.3.1",
     "webpack": "5.89.0",
-    "webpack-cli": "5.1.4",
-    "typescript-esbuild": "0.3.1"
+    "webpack-cli": "5.1.4"
   },
-  "icon": "media/logo-128x128.png",
-  "preview": true,
-  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-  "bugs": {
-    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-  },
-  "license": "MIT",
-  "type": "module",
-  "private": "false",
   "publishConfig": {
     "access": "public"
   },
-  "author": {
-    "name": "Nikola Hristov",
-    "email": "nikola@nikolahristov.tech",
-    "url": "https://nikolahristov.tech"
-  }
+  "icon": "media/logo-128x128.png",
+  "preview": true
 }
