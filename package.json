@@ -4,19 +4,6 @@
   "displayName": "Microsoft MakeCode Arcade",
   "description": "Make games and learn code. Create retro arcade style video games, art, and music inside VS Code.",
   "version": "1.0.1",
-  "engines": {
-    "vscode": "1.75.0"
-  },
-  "categories": [
-    "Education"
-  ],
-  "keywords": [
-    "makecode",
-    "education",
-    "arcade",
-    "learn",
-    "student"
-  ],
   "icon": "media/logo-128x128.png",
   "preview": true,
   "repository": {
@@ -335,7 +322,6 @@
     "compile-web": "webpack",
     "watch-web": "webpack --watch",
     "package-web": "webpack --mode production --devtool hidden-source-map",
-    "lint": "eslint src --ext ts",
     "run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=.",
     "generate-l10n": "vscode-l10n-dev export --outDir ./l10n ./src",
     "generate-l10n-ploc": "vscode-l10n-dev generate-pseudo -o ./l10n ./l10n/bundle.l10n.json ./package.nls.json"
@@ -344,12 +330,9 @@
     "@types/mocha": "10.0.0",
     "@types/vscode": "1.74.0",
     "@types/webpack-env": "1.18.0",
-    "@typescript-eslint/eslint-plugin": "5.38.1",
-    "@typescript-eslint/parser": "5.38.1",
     "@vscode/l10n-dev": "0.0.22",
     "@vscode/test-web": "0.0.30",
     "assert": "2.0.0",
-    "eslint": "8.24.0",
     "mocha": "10.0.0",
     "process": "0.11.10",
     "ts-loader": "9.4.1",
