@@ -1,11 +1,11 @@
+import { BrowserLanguageService } from "makecode-browser/built/languageService";
 import {
 	Host,
 	HttpRequestOptions,
 	HttpResponse,
 } from "makecode-core/built/host";
-import { BrowserLanguageService } from "makecode-browser/built/languageService";
-import * as vscode from "vscode";
 import * as path from "path-browserify";
+import * as vscode from "vscode";
 
 let _activeWorkspace: vscode.WorkspaceFolder;
 
@@ -47,7 +47,7 @@ export async function readFileAsync(path: string, encoding?: "utf8") {
 export async function writeFileAsync(
 	path: string,
 	content: any,
-	encoding?: "base64" | "utf8"
+	encoding?: "base64" | "utf8",
 ): Promise<void> {
 	if (encoding === "base64") {
 		content = Uint8Array.from(atob(content), (c) => c.charCodeAt(0));
@@ -112,7 +112,7 @@ export function httpRequestCoreAsync(options: HttpRequestOptions) {
 		let client: XMLHttpRequest;
 		let resolved = false;
 
-		let headers = options.headers || {};
+		const headers = options.headers || {};
 
 		client = new XMLHttpRequest();
 		client.onreadystatechange = () => {
@@ -122,7 +122,7 @@ export function httpRequestCoreAsync(options: HttpRequestOptions) {
 
 			if (client.readyState === 4) {
 				resolved = true;
-				let res: HttpResponse = {
+				const res: HttpResponse = {
 					statusCode: client.status,
 					headers: {},
 					buffer: (client as any).responseBody || client.response,
@@ -134,7 +134,7 @@ export function httpRequestCoreAsync(options: HttpRequestOptions) {
 				}
 				const allHeaders = client.getAllResponseHeaders();
 				allHeaders.split(/\r?\n/).forEach((l) => {
-					let m = /^\s*([^:]+): (.*)/.exec(l);
+					const m = /^\s*([^:]+): (.*)/.exec(l);
 					if (m) {
 						res.headers[m[1].toLowerCase()] = m[2];
 					}
@@ -143,8 +143,8 @@ export function httpRequestCoreAsync(options: HttpRequestOptions) {
 			}
 		};
 
-		let data = options.data;
-		let method = options.method || (data == null ? "GET" : "POST");
+		const data = options.data;
+		const method = options.method || (data == null ? "GET" : "POST");
 
 		let buf: any;
 
@@ -211,7 +211,7 @@ export async function findFilesAsync(
 	extension: string,
 	root: vscode.Uri,
 	matchWholeName: boolean,
-	maxDepth = 5
+	maxDepth = 5,
 ) {
 	if (maxDepth === 0) return [];
 
@@ -225,7 +225,7 @@ export async function findFilesAsync(
 
 		if (type === vscode.FileType.Directory) {
 			recursivePromises.push(
-				findFilesAsync(extension, uri, matchWholeName, maxDepth - 1)
+				findFilesAsync(extension, uri, matchWholeName, maxDepth - 1),
 			);
 		} else if (type === vscode.FileType.File) {
 			if (matchWholeName) {

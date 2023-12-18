@@ -48,7 +48,7 @@ export class AssetEditor {
 		if (AssetEditor.currentEditor) {
 			AssetEditor.currentEditor.panel.reveal(
 				undefined /** keep current column **/,
-				true
+				true,
 			);
 			return;
 		}
@@ -64,7 +64,7 @@ export class AssetEditor {
 				// Enable javascript in the webview
 				enableScripts: true,
 				retainContextWhenHidden: true,
-			}
+			},
 		);
 
 		AssetEditor.currentEditor = new AssetEditor(panel);
@@ -74,7 +74,7 @@ export class AssetEditor {
 		extensionContext = context;
 		vscode.window.registerWebviewPanelSerializer(
 			"mkcdasset",
-			new AssetEditorSerializer()
+			new AssetEditorSerializer(),
 		);
 	}
 
@@ -231,12 +231,12 @@ export class AssetEditor {
 export class AssetEditorSerializer implements vscode.WebviewPanelSerializer {
 	async deserializeWebviewPanel(
 		webviewPanel: vscode.WebviewPanel,
-		state: any
+		state: any,
 	) {
 		AssetEditor.revive(webviewPanel);
 		await AssetEditor.currentEditor?.openAssetAsync(
 			state.editing!.assetType,
-			state.editing!.assetId
+			state.editing!.assetId,
 		);
 	}
 }
@@ -245,7 +245,7 @@ async function getAssetEditorHtmlAsync(webview: vscode.Webview) {
 	const uri = vscode.Uri.joinPath(
 		extensionContext.extensionUri,
 		"resources",
-		"assetframe.html"
+		"assetframe.html",
 	);
 	const contents = await readTextFileAsync(uri);
 
@@ -255,8 +255,8 @@ async function getAssetEditorHtmlAsync(webview: vscode.Webview) {
 				vscode.Uri.joinPath(
 					extensionContext.extensionUri,
 					"resources",
-					s
-				)
+					s,
+				),
 			)
 			.toString();
 
@@ -326,7 +326,7 @@ async function saveFilesAsync(files: { [index: string]: string }) {
 
 	if (didChangeConfig) {
 		await vscode.commands.executeCommand(
-			"workbench.files.action.refreshFilesExplorer"
+			"workbench.files.action.refreshFilesExplorer",
 		);
 	}
 }

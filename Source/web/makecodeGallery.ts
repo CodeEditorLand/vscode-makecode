@@ -15,7 +15,7 @@ export interface HardwareVariant {
 }
 
 export async function getHardwareVariantsAsync(
-	workspace: vscode.WorkspaceFolder
+	workspace: vscode.WorkspaceFolder,
 ) {
 	const variants = await listHardwareVariantsAsync(workspace);
 
@@ -55,14 +55,14 @@ export async function getHardwareVariantsAsync(
 }
 
 export async function getProjectTemplatesAsync(
-	workspace: vscode.WorkspaceFolder
+	workspace: vscode.WorkspaceFolder,
 ) {
 	return fetchGalleriesAsync(workspace, "js-templates");
 }
 
 async function fetchGalleriesAsync(
 	workspace: vscode.WorkspaceFolder,
-	mdName: string
+	mdName: string,
 ) {
 	const supportedTargets = await getSupportedTargetsAsync(workspace);
 	const res: pxt.CodeCard[] = [];
@@ -86,7 +86,7 @@ async function fetchGalleriesAsync(
 async function getSupportedTargetsAsync(workspace: vscode.WorkspaceFolder) {
 	if (await fileExistsAsync(vscode.Uri.joinPath(workspace.uri, "pxt.json"))) {
 		const config = await readTextFileAsync(
-			vscode.Uri.joinPath(workspace.uri, "pxt.json")
+			vscode.Uri.joinPath(workspace.uri, "pxt.json"),
 		);
 		const parsed = JSON.parse(config) as pxt.PackageConfig;
 		if (parsed.supportedTargets) {
@@ -118,7 +118,7 @@ function parseGalleryMardown(md: string) {
 	const galleries: { name: string; cards: pxt.CodeCard[] }[] = [];
 	let incard = false;
 	let name: string | undefined = undefined;
-	let cardsSource: string = "";
+	let cardsSource = "";
 	md.split(/\r?\n/).forEach((line) => {
 		// new category
 		if (/^## /.test(line)) {
@@ -152,7 +152,7 @@ function parseCodeCards(md: string): pxt.CodeCard[] | undefined {
 		.split(/^---$/gm)
 		.filter((cmd) => !!cmd)
 		.map((cmd) => {
-			let cc: any = {};
+			const cc: any = {};
 			cmd.replace(/^\s*(?:-|\*)\s+(\w+)\s*:\s*(.*)$/gm, (m, n, v) => {
 				if (n == "flags") cc[n] = v.split(",");
 				else if (n === "otherAction") {

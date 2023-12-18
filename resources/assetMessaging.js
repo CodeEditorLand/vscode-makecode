@@ -1,8 +1,8 @@
-(function () {
+(() => {
 	let frame;
-	let vscode = acquireVsCodeApi();
+	const vscode = acquireVsCodeApi();
 
-	window.addEventListener("message", function (m) {
+	window.addEventListener("message", (m) => {
 		if (m.data._fromVscode) {
 			frame.contentWindow.postMessage(m.data, "*");
 
@@ -18,7 +18,7 @@
 			vscode.postMessage(m.data);
 		}
 	});
-	document.addEventListener("DOMContentLoaded", function (event) {
+	document.addEventListener("DOMContentLoaded", (event) => {
 		frame = document.getElementById("asset-editor-frame");
 	});
 })();

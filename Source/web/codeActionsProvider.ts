@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { AssetKind, getCurrentJresNodes, JResTreeNode } from "./jres";
+import { AssetKind, JResTreeNode, getCurrentJresNodes } from "./jres";
 
 export function codeActionsProvider() {
 	return vscode.languages.registerCodeActionsProvider(
@@ -14,7 +14,7 @@ export function codeActionsProvider() {
 					/assets\.(image|tile|tilemap|animation|song)`([a-z0-9 _-]+)`/gi;
 
 				let match: RegExpExecArray | null;
-				let output = [];
+				const output = [];
 				while ((match = matchRegex.exec(line.text))) {
 					const assetType = match[1].toLowerCase() as AssetKind;
 					const givenAssetName = match[2];
@@ -29,12 +29,12 @@ export function codeActionsProvider() {
 					const asset = jresNodes.find(
 						(node) =>
 							node.name === givenAssetName ||
-							node.id === givenAssetName
+							node.id === givenAssetName,
 					);
 					output.push(
 						asset?.uri
 							? editCodeAction(asset, givenAssetName)
-							: createCodeAction(assetType, givenAssetName)
+							: createCodeAction(assetType, givenAssetName),
 					);
 				}
 
@@ -46,7 +46,7 @@ export function codeActionsProvider() {
 				vscode.CodeActionKind.Refactor,
 				vscode.CodeActionKind.QuickFix,
 			],
-		}
+		},
 	);
 }
 

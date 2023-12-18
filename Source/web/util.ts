@@ -6,17 +6,16 @@ import * as vscode from "vscode";
 export function throttle(
 	func: (...args: any[]) => any,
 	wait: number,
-	immediate?: boolean
+	immediate?: boolean,
 ): any {
 	let timeout: any;
 	let lastArgs: IArguments | undefined;
 	return function (this: any) {
-		const context = this;
 		lastArgs = arguments;
 		const later = () => {
 			timeout = null;
 			if (!immediate) {
-				func.apply(context, lastArgs as any);
+				func.apply(this, lastArgs as any);
 				lastArgs = undefined;
 			}
 		};
@@ -25,7 +24,7 @@ export function throttle(
 			timeout = setTimeout(later, wait);
 		}
 		if (callNow) {
-			func.apply(context, lastArgs as any);
+			func.apply(this, lastArgs as any);
 			lastArgs = undefined;
 		}
 	};
@@ -38,20 +37,19 @@ export function throttle(
 export function debounce(
 	func: (...args: any[]) => any,
 	wait: number,
-	immediate?: boolean
+	immediate?: boolean,
 ): any {
 	let timeout: any;
 	return function (this: any) {
-		const context = this;
 		const args = arguments;
-		const later = function () {
+		const later = () => {
 			timeout = null;
-			if (!immediate) func.apply(context, args as any);
+			if (!immediate) func.apply(this, args as any);
 		};
 		const callNow = immediate && !timeout;
 		clearTimeout(timeout);
 		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args as any);
+		if (callNow) func.apply(this, args as any);
 		return timeout;
 	};
 }
@@ -67,7 +65,7 @@ export async function readTextFileAsync(uri: vscode.Uri): Promise<string> {
 export async function writeTextFileAsync(uri: vscode.Uri, contents: string) {
 	await vscode.workspace.fs.writeFile(
 		uri,
-		new TextEncoder().encode(contents)
+		new TextEncoder().encode(contents),
 	);
 }
 
@@ -81,7 +79,7 @@ export async function getPxtJson(workspace: vscode.WorkspaceFolder) {
 
 export async function setPxtJson(
 	workspace: vscode.WorkspaceFolder,
-	pxtJson: pxt.PackageConfig
+	pxtJson: pxt.PackageConfig,
 ) {
 	const configPath = vscode.Uri.joinPath(workspace.uri, "pxt.json");
 	await writeTextFileAsync(configPath, JSON.stringify(pxtJson, null, 4));
@@ -96,7 +94,7 @@ function getRandomBuf(buf: Uint8Array) {
 }
 
 function randomUint32() {
-	let buf = new Uint8Array(4);
+	const buf = new Uint8Array(4);
 	getRandomBuf(buf);
 	return new Uint32Array(buf.buffer)[0];
 }
@@ -122,7 +120,7 @@ export function guidGen() {
 }
 
 export function showQuickPickAsync<U extends vscode.QuickPickItem>(
-	qp: vscode.QuickPick<U>
+	qp: vscode.QuickPick<U>,
 ) {
 	return new Promise<U>((resolve, reject) => {
 		qp.onDidAccept(() => {

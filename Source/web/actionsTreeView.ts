@@ -83,7 +83,7 @@ export class ActionsTreeViewProvider
 		| undefined;
 
 	getTreeItem(
-		element: ActionTreeNode
+		element: ActionTreeNode,
 	): vscode.TreeItem | Thenable<vscode.TreeItem> {
 		return {
 			label: element.label,
@@ -94,7 +94,7 @@ export class ActionsTreeViewProvider
 	}
 
 	getChildren(
-		element?: ActionTreeNode | undefined
+		element?: ActionTreeNode | undefined,
 	): vscode.ProviderResult<ActionTreeNode[]> {
 		if (!element) return actions;
 		return [];

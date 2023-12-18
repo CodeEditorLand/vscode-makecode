@@ -37,7 +37,7 @@ export class JResTreeProvider implements vscode.TreeDataProvider<JResTreeNode> {
 	onDidChangeTreeData: vscode.Event<JResTreeNode[] | undefined | void>;
 
 	constructor(
-		public kind: "image" | "tile" | "tilemap" | "animation" | "song"
+		public kind: "image" | "tile" | "tilemap" | "animation" | "song",
 	) {
 		if (!model) {
 			model = new JResTreeModel();
@@ -48,7 +48,7 @@ export class JResTreeProvider implements vscode.TreeDataProvider<JResTreeNode> {
 	}
 
 	getTreeItem(
-		element: JResTreeNode
+		element: JResTreeNode,
 	): vscode.TreeItem | Thenable<vscode.TreeItem> {
 		return {
 			label: element.name || kindToDisplayName(element.kind),
@@ -58,7 +58,7 @@ export class JResTreeProvider implements vscode.TreeDataProvider<JResTreeNode> {
 						title: vscode.l10n.t("Open MakeCode Asset"),
 						command: "makecode.openAsset",
 						arguments: [element.uri],
-					}
+				  }
 				: undefined,
 			collapsibleState: element.id
 				? vscode.TreeItemCollapsibleState.None
@@ -67,7 +67,7 @@ export class JResTreeProvider implements vscode.TreeDataProvider<JResTreeNode> {
 	}
 
 	getChildren(
-		element?: JResTreeNode | undefined
+		element?: JResTreeNode | undefined,
 	): vscode.ProviderResult<JResTreeNode[]> {
 		if (!element) {
 			return model.nodes.filter((node) => node.kind === this.kind);
@@ -125,7 +125,7 @@ export async function deleteAssetAsync(node: JResTreeNode) {
 
 	await vscode.workspace.fs.writeFile(
 		node.sourceFile,
-		new TextEncoder().encode(JSON.stringify(sourceJRes, null, 4))
+		new TextEncoder().encode(JSON.stringify(sourceJRes, null, 4)),
 	);
 	await syncJResAsync();
 }
@@ -177,7 +177,7 @@ async function readProjectJResAsync() {
 							namespaceJoin(
 								"asset",
 								mimeTypeToKind(defaultMimeType!),
-								id!
+								id!,
 							),
 					}),
 				});
@@ -185,7 +185,7 @@ async function readProjectJResAsync() {
 				nodes.push({
 					kind: mimeTypeToKind(
 						jres[key].mimeType || defaultMimeType,
-						jres[key].tilemapTile
+						jres[key].tilemapTile,
 					),
 					id: id,
 					name: jres[key].displayName,
@@ -199,9 +199,9 @@ async function readProjectJResAsync() {
 								"asset",
 								mimeTypeToKind(
 									jres[key].mimeType || defaultMimeType,
-									jres[key].tilemapTile
+									jres[key].tilemapTile,
 								),
-								id!
+								id!,
 							),
 					}),
 				});

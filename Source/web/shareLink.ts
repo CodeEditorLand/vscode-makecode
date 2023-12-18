@@ -23,7 +23,7 @@ export async function shareProjectAsync(workspace: vscode.WorkspaceFolder) {
 
 async function createShareLinkRequestAsync(workspace: vscode.WorkspaceFolder) {
 	const config = await readTextFileAsync(
-		vscode.Uri.joinPath(workspace.uri, "pxt.json")
+		vscode.Uri.joinPath(workspace.uri, "pxt.json"),
 	);
 	const parsed = JSON.parse(config) as pxt.PackageConfig;
 
@@ -33,7 +33,7 @@ async function createShareLinkRequestAsync(workspace: vscode.WorkspaceFolder) {
 
 	for (const file of parsed.files) {
 		const content = await readTextFileAsync(
-			vscode.Uri.joinPath(workspace.uri, file)
+			vscode.Uri.joinPath(workspace.uri, file),
 		);
 		files[file] = content;
 	}

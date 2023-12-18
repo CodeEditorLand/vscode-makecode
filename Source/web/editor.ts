@@ -50,7 +50,7 @@ export class MakeCodeEditor {
 		if (MakeCodeEditor.currentEditor) {
 			MakeCodeEditor.currentEditor.panel.reveal(
 				undefined /** keep current column **/,
-				true
+				true,
 			);
 			return;
 		}
@@ -66,7 +66,7 @@ export class MakeCodeEditor {
 				// Enable javascript in the webview
 				enableScripts: true,
 				retainContextWhenHidden: true,
-			}
+			},
 		);
 
 		MakeCodeEditor.currentEditor = new MakeCodeEditor(panel);
@@ -76,7 +76,7 @@ export class MakeCodeEditor {
 		extensionContext = context;
 		vscode.window.registerWebviewPanelSerializer(
 			"mkcdeditor",
-			new MakeCodeEditorSerializer()
+			new MakeCodeEditorSerializer(),
 		);
 	}
 
@@ -137,11 +137,11 @@ export class MakeCodeEditor {
 			// Ideally we'd just send the project again instead of reloading the webview but because makecode aggressively
 			// caches the blocks in the toolbox we have to do a full reload.
 			() => this.initWebviewHtmlAsync(),
-			debounceTimer
+			debounceTimer,
 		);
 
 		const fsWatcher = vscode.workspace.createFileSystemWatcher(
-			new vscode.RelativePattern(folder, "**")
+			new vscode.RelativePattern(folder, "**"),
 		);
 		const watchHandler = (uri: vscode.Uri) => {
 			if (!this.running) {
@@ -196,10 +196,10 @@ export class MakeCodeEditor {
 	async handleHostMessage(message: any) {
 		if (message.action === "workspacesync") {
 			const project = await this.readProjectAsync(
-				this.folder || activeWorkspace()
+				this.folder || activeWorkspace(),
 			);
 			const testProject = await this.readTestProjectAsync(
-				this.folder || activeWorkspace()
+				this.folder || activeWorkspace(),
 			);
 			message.projects = [project];
 
@@ -222,7 +222,7 @@ export class MakeCodeEditor {
 			if (project?.header.extensionUnderTest === this.extHeaderId) {
 				this.saveTestProjectAsync(
 					this.folder || activeWorkspace(),
-					project
+					project,
 				);
 			}
 		}
@@ -254,7 +254,7 @@ export class MakeCodeEditor {
 
 	protected async initWebviewHtmlAsync() {
 		const testProject = await this.readTestProjectAsync(
-			this.folder || activeWorkspace()
+			this.folder || activeWorkspace(),
 		);
 		if (testProject) {
 			this.testHeaderId = testProject.header.id;
@@ -269,21 +269,21 @@ export class MakeCodeEditor {
 			: "testproject:" + this.extHeaderId;
 		const simulatorHTML = await getMakeCodeEditorHtmlAsync(
 			this.panel.webview,
-			hash
+			hash,
 		);
 		this.panel.webview.html = simulatorHTML;
 	}
 
 	protected async onReadyMessageReceivedAsync() {
-		if (!this.running) {
-			await this.startWatching(activeWorkspace());
-		} else {
+		if (this.running) {
 			this.openTestProjectAsync();
+		} else {
+			await this.startWatching(activeWorkspace());
 		}
 	}
 
 	protected async readProjectAsync(
-		workspace: vscode.WorkspaceFolder
+		workspace: vscode.WorkspaceFolder,
 	): Promise<Project> {
 		const text = await createProjectBlobAsync(workspace);
 		const header = createHeader();
@@ -294,7 +294,7 @@ export class MakeCodeEditor {
 	}
 
 	protected async readTestProjectAsync(
-		workspace: vscode.WorkspaceFolder
+		workspace: vscode.WorkspaceFolder,
 	): Promise<Project | undefined> {
 		const uri = vscode.Uri.joinPath(workspace.uri, ".pxt", "test_project");
 		if (await fileExistsAsync(uri)) {
@@ -305,7 +305,7 @@ export class MakeCodeEditor {
 
 	protected async saveTestProjectAsync(
 		workspace: vscode.WorkspaceFolder,
-		project: Project
+		project: Project,
 	) {
 		const uri = vscode.Uri.joinPath(workspace.uri, ".pxt", "test_project");
 		await writeTextFileAsync(uri, JSON.stringify(project));
@@ -315,7 +315,7 @@ export class MakeCodeEditor {
 export class MakeCodeEditorSerializer implements vscode.WebviewPanelSerializer {
 	async deserializeWebviewPanel(
 		webviewPanel: vscode.WebviewPanel,
-		state: any
+		state: any,
 	) {
 		MakeCodeEditor.revive(webviewPanel);
 	}
@@ -323,12 +323,12 @@ export class MakeCodeEditorSerializer implements vscode.WebviewPanelSerializer {
 
 async function getMakeCodeEditorHtmlAsync(
 	webview: vscode.Webview,
-	hash: string
+	hash: string,
 ) {
 	const uri = vscode.Uri.joinPath(
 		extensionContext.extensionUri,
 		"resources",
-		"editorframe.html"
+		"editorframe.html",
 	);
 	const contents = await readTextFileAsync(uri);
 
@@ -338,8 +338,8 @@ async function getMakeCodeEditorHtmlAsync(
 				vscode.Uri.joinPath(
 					extensionContext.extensionUri,
 					"resources",
-					s
-				)
+					s,
+				),
 			)
 			.toString();
 
@@ -355,7 +355,7 @@ async function createProjectBlobAsync(workspace: vscode.WorkspaceFolder) {
 	const processFileAsync = async (file: string) => {
 		try {
 			const contents = await readTextFileAsync(
-				vscode.Uri.joinPath(workspace.uri, file)
+				vscode.Uri.joinPath(workspace.uri, file),
 			);
 			project[file] = contents;
 		} catch (e) {

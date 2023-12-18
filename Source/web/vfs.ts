@@ -25,7 +25,7 @@ export class VFS implements vscode.FileSystemProvider {
 	async writeFile(
 		uri: vscode.Uri,
 		content: Uint8Array,
-		options: { create: boolean; overwrite: boolean; readonly?: true }
+		options: { create: boolean; overwrite: boolean; readonly?: true },
 	) {
 		await vscode.workspace.fs.writeFile(await this.remapURI(uri), content);
 		this._fireSoon({ type: vscode.FileChangeType.Changed, uri });
@@ -36,16 +36,16 @@ export class VFS implements vscode.FileSystemProvider {
 	async rename(
 		oldUri: vscode.Uri,
 		newUri: vscode.Uri,
-		options: { overwrite: boolean }
+		options: { overwrite: boolean },
 	) {
 		await vscode.workspace.fs.rename(
 			await this.remapURI(oldUri),
 			await this.remapURI(newUri),
-			options
+			options,
 		);
 		this._fireSoon(
 			{ type: vscode.FileChangeType.Deleted, uri: oldUri },
-			{ type: vscode.FileChangeType.Created, uri: newUri }
+			{ type: vscode.FileChangeType.Created, uri: newUri },
 		);
 	}
 
@@ -54,7 +54,7 @@ export class VFS implements vscode.FileSystemProvider {
 		const dirname = uri.with({ path: path.posix.dirname(uri.path) });
 		this._fireSoon(
 			{ type: vscode.FileChangeType.Changed, uri: dirname },
-			{ uri, type: vscode.FileChangeType.Deleted }
+			{ uri, type: vscode.FileChangeType.Deleted },
 		);
 	}
 
@@ -64,7 +64,7 @@ export class VFS implements vscode.FileSystemProvider {
 
 		this._fireSoon(
 			{ type: vscode.FileChangeType.Changed, uri: dirname },
-			{ type: vscode.FileChangeType.Created, uri }
+			{ type: vscode.FileChangeType.Created, uri },
 		);
 	}
 
@@ -113,14 +113,14 @@ export class VFS implements vscode.FileSystemProvider {
 				if (!this.initializedDirs[parts[0]]) {
 					if (!this.initializePromises[parts[0]]) {
 						this.initializePromises[parts[0]] = this.initializeDir(
-							parts[0]
+							parts[0],
 						);
 					}
 					await this.initializePromises[parts[0]];
 				}
 			} else if (
 				/^(?:(?:S?\d{4}[\d\-]+|_[a-zA-Z0-9]{10,})\.code-workspace)$/.test(
-					parts[0]
+					parts[0],
 				)
 			) {
 				if (!this.initializedDirs[parts[0]]) {
@@ -139,7 +139,7 @@ export class VFS implements vscode.FileSystemProvider {
 	private async initializeDir(shareId: string) {
 		const projectDir = vscode.Uri.joinPath(
 			this.context.globalStorageUri,
-			shareId
+			shareId,
 		);
 		const pxtJSON = vscode.Uri.joinPath(projectDir, "pxt.json");
 
@@ -159,18 +159,18 @@ export class VFS implements vscode.FileSystemProvider {
 	private async initializeWorkspace(name: string) {
 		const workspacePath = vscode.Uri.joinPath(
 			this.context.globalStorageUri,
-			name
+			name,
 		);
 		if (!(await this.existsAsync(workspacePath))) {
 			const shareId =
 				/^(S?\d{4}[\d\-]+|_[a-zA-Z0-9]{10,})\.code-workspace$/.exec(
-					name
+					name,
 				)![1];
 			await vscode.workspace.fs.writeFile(
 				workspacePath,
 				new TextEncoder().encode(
-					JSON.stringify({ folders: [{ path: "./" + shareId }] })
-				)
+					JSON.stringify({ folders: [{ path: "./" + shareId }] }),
+				),
 			);
 		}
 		this.initializedDirs[name] = true;
