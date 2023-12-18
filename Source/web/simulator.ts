@@ -17,7 +17,7 @@ export class Simulator {
 		extensionContext = extCtx;
 		vscode.window.registerWebviewPanelSerializer(
 			"mkcdsim",
-			new SimulatorSerializer(extCtx),
+			new SimulatorSerializer(extCtx)
 		);
 	}
 
@@ -35,7 +35,7 @@ export class Simulator {
 			Simulator.currentSimulator.simState = null;
 			Simulator.currentSimulator.panel.reveal(
 				undefined /** keep current column **/,
-				true,
+				true
 			);
 			return;
 		}
@@ -51,7 +51,7 @@ export class Simulator {
 				// Enable javascript in the webview
 				enableScripts: true,
 				retainContextWhenHidden: true,
-			},
+			}
 		);
 
 		Simulator.currentSimulator = new Simulator(panel);
@@ -90,7 +90,7 @@ export class Simulator {
 		if (this.simState == null) {
 			this.simState = await extensionContext.workspaceState.get(
 				"simstate",
-				{},
+				{}
 			);
 		}
 		this.panel.webview.html = simulatorHTML;
@@ -154,7 +154,7 @@ export class SimulatorSerializer implements vscode.WebviewPanelSerializer {
 	constructor(public context: vscode.ExtensionContext) {}
 	async deserializeWebviewPanel(
 		webviewPanel: vscode.WebviewPanel,
-		state: unknown,
+		state: unknown
 	) {
 		Simulator.revive(webviewPanel);
 		await simulateCommand(this.context);
@@ -204,7 +204,7 @@ async function getSimHtmlAsync() {
             `;
 				}
 				return "";
-			},
+			}
 		)
 		.replace("usePostMessage: false", "usePostMessage: true");
 }

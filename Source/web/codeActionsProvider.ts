@@ -29,12 +29,12 @@ export function codeActionsProvider() {
 					const asset = jresNodes.find(
 						(node) =>
 							node.name === givenAssetName ||
-							node.id === givenAssetName,
+							node.id === givenAssetName
 					);
 					output.push(
 						asset?.uri
 							? editCodeAction(asset, givenAssetName)
-							: createCodeAction(assetType, givenAssetName),
+							: createCodeAction(assetType, givenAssetName)
 					);
 				}
 
@@ -46,7 +46,7 @@ export function codeActionsProvider() {
 				vscode.CodeActionKind.Refactor,
 				vscode.CodeActionKind.QuickFix,
 			],
-		},
+		}
 	);
 }
 

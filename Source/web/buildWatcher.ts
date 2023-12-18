@@ -46,11 +46,11 @@ export class BuildWatcher {
 
 		const debouncedBuild = debounce(
 			() => this.buildAsync(false),
-			debounceTimer,
+			debounceTimer
 		);
 
 		const fsWatcher = vscode.workspace.createFileSystemWatcher(
-			new vscode.RelativePattern(folder, "**"),
+			new vscode.RelativePattern(folder, "**")
 		);
 		const watchHandler = (uri: vscode.Uri) => {
 			if (!this.running) {
@@ -109,7 +109,7 @@ export class BuildWatcher {
 	addEventListener(event: "build-completed", handler: () => void): void;
 	addEventListener(
 		event: "error" | "build-completed",
-		handler: Function,
+		handler: Function
 	): void {
 		if (event === "build-completed") {
 			this.buildCompletedListeners.push(handler as any);
@@ -122,15 +122,15 @@ export class BuildWatcher {
 	removeEventListener(event: "build-completed", handler: () => void): void;
 	removeEventListener(
 		event: "error" | "build-completed",
-		handler: Function,
+		handler: Function
 	): void {
 		if (event === "build-completed") {
 			this.buildCompletedListeners = this.buildCompletedListeners.filter(
-				(h) => h !== handler,
+				(h) => h !== handler
 			);
 		} else {
 			this.errorListeners = this.errorListeners.filter(
-				(h) => h !== handler,
+				(h) => h !== handler
 			);
 		}
 	}
@@ -174,7 +174,7 @@ export class BuildWatcher {
 						const result = await buildProjectAsync(
 							this.folder!,
 							this.buildOpts,
-							token?.token,
+							token?.token
 						);
 						token?.dispose();
 
@@ -201,7 +201,7 @@ export class BuildWatcher {
 				} finally {
 					this.building = false;
 				}
-			},
+			}
 		);
 	}
 

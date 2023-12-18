@@ -47,7 +47,7 @@ export async function readFileAsync(path: string, encoding?: "utf8") {
 export async function writeFileAsync(
 	path: string,
 	content: any,
-	encoding?: "base64" | "utf8",
+	encoding?: "base64" | "utf8"
 ): Promise<void> {
 	if (encoding === "base64") {
 		content = Uint8Array.from(atob(content), (c) => c.charCodeAt(0));
@@ -211,7 +211,7 @@ export async function findFilesAsync(
 	extension: string,
 	root: vscode.Uri,
 	matchWholeName: boolean,
-	maxDepth = 5,
+	maxDepth = 5
 ) {
 	if (maxDepth === 0) return [];
 
@@ -225,7 +225,7 @@ export async function findFilesAsync(
 
 		if (type === vscode.FileType.Directory) {
 			recursivePromises.push(
-				findFilesAsync(extension, uri, matchWholeName, maxDepth - 1),
+				findFilesAsync(extension, uri, matchWholeName, maxDepth - 1)
 			);
 		} else if (type === vscode.FileType.File) {
 			if (matchWholeName) {

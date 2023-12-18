@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 export function throttle(
 	func: (...args: any[]) => any,
 	wait: number,
-	immediate?: boolean,
+	immediate?: boolean
 ): any {
 	let timeout: any;
 	let lastArgs: IArguments | undefined;
@@ -38,7 +38,7 @@ export function throttle(
 export function debounce(
 	func: (...args: any[]) => any,
 	wait: number,
-	immediate?: boolean,
+	immediate?: boolean
 ): any {
 	let timeout: any;
 	return function (this: any) {
@@ -67,7 +67,7 @@ export async function readTextFileAsync(uri: vscode.Uri): Promise<string> {
 export async function writeTextFileAsync(uri: vscode.Uri, contents: string) {
 	await vscode.workspace.fs.writeFile(
 		uri,
-		new TextEncoder().encode(contents),
+		new TextEncoder().encode(contents)
 	);
 }
 
@@ -81,7 +81,7 @@ export async function getPxtJson(workspace: vscode.WorkspaceFolder) {
 
 export async function setPxtJson(
 	workspace: vscode.WorkspaceFolder,
-	pxtJson: pxt.PackageConfig,
+	pxtJson: pxt.PackageConfig
 ) {
 	const configPath = vscode.Uri.joinPath(workspace.uri, "pxt.json");
 	await writeTextFileAsync(configPath, JSON.stringify(pxtJson, null, 4));
@@ -122,7 +122,7 @@ export function guidGen() {
 }
 
 export function showQuickPickAsync<U extends vscode.QuickPickItem>(
-	qp: vscode.QuickPick<U>,
+	qp: vscode.QuickPick<U>
 ) {
 	return new Promise<U>((resolve, reject) => {
 		qp.onDidAccept(() => {

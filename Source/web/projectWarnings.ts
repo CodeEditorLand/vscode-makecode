@@ -12,14 +12,14 @@ export async function maybeShowConfigNotificationAsync() {
 	for (const folder of vscode.workspace.workspaceFolders) {
 		if (
 			await fileExistsAsync(
-				vscode.Uri.joinPath(folder.uri, "tsconfig.json"),
+				vscode.Uri.joinPath(folder.uri, "tsconfig.json")
 			)
 		) {
 			continue;
 		}
 		if (
 			!(await fileExistsAsync(
-				vscode.Uri.joinPath(folder.uri, "pxt.json"),
+				vscode.Uri.joinPath(folder.uri, "pxt.json")
 			))
 		) {
 			continue;
@@ -33,7 +33,7 @@ export async function maybeShowConfigNotificationAsync() {
 
 	const selection = await vscode.window.showWarningMessage(
 		vscode.l10n.t("MakeCode project is missing a tsconfig.json file."),
-		vscode.l10n.t("Add tsconfig.json"),
+		vscode.l10n.t("Add tsconfig.json")
 	);
 
 	if (!selection) {
@@ -43,7 +43,7 @@ export async function maybeShowConfigNotificationAsync() {
 	for (const folder of foldersToFix) {
 		await writeTextFileAsync(
 			vscode.Uri.joinPath(folder.uri, "tsconfig.json"),
-			templateConfig,
+			templateConfig
 		);
 	}
 }
@@ -55,7 +55,7 @@ export async function writeTSConfigAsync(folder: vscode.Uri) {
 
 	await writeTextFileAsync(
 		vscode.Uri.joinPath(folder, "tsconfig.json"),
-		templateConfig,
+		templateConfig
 	);
 }
 
@@ -68,14 +68,14 @@ export async function maybeShowDependenciesNotificationAsync() {
 	for (const folder of vscode.workspace.workspaceFolders) {
 		if (
 			!(await fileExistsAsync(
-				vscode.Uri.joinPath(folder.uri, "pxt.json"),
+				vscode.Uri.joinPath(folder.uri, "pxt.json")
 			))
 		) {
 			continue;
 		}
 		if (
 			await fileExistsAsync(
-				vscode.Uri.joinPath(folder.uri, "pxt_modules"),
+				vscode.Uri.joinPath(folder.uri, "pxt_modules")
 			)
 		) {
 			continue;
@@ -83,7 +83,7 @@ export async function maybeShowDependenciesNotificationAsync() {
 
 		try {
 			const config = await readTextFileAsync(
-				vscode.Uri.joinPath(folder.uri, "pxt.json"),
+				vscode.Uri.joinPath(folder.uri, "pxt.json")
 			);
 			const parsed = JSON.parse(config);
 
@@ -101,9 +101,9 @@ export async function maybeShowDependenciesNotificationAsync() {
 
 	const selection = await vscode.window.showInformationMessage(
 		vscode.l10n.t(
-			"Do you want to install the dependencies of all open MakeCode projects?",
+			"Do you want to install the dependencies of all open MakeCode projects?"
 		),
-		vscode.l10n.t("Install dependencies"),
+		vscode.l10n.t("Install dependencies")
 	);
 	if (!selection) {
 		return;
@@ -120,7 +120,7 @@ export async function maybeShowDependenciesNotificationAsync() {
 				progress.report({
 					message: vscode.l10n.t(
 						"Installing dependencies for {0}",
-						folder.name,
+						folder.name
 					),
 				});
 
@@ -137,12 +137,12 @@ export async function maybeShowDependenciesNotificationAsync() {
 						vscode.l10n.t(
 							"Error while installing dependencies for {0}: {1}",
 							folder.name,
-							errorMessage,
-						),
+							errorMessage
+						)
 					);
 				}
 			}
-		},
+		}
 	);
 }
 

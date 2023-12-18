@@ -17,41 +17,41 @@ let currentlyWorking = false;
 export function buildProjectAsync(
 	folder: vscode.WorkspaceFolder,
 	options?: cmd.BuildOptions,
-	cancellationToken?: vscode.CancellationToken,
+	cancellationToken?: vscode.CancellationToken
 ) {
 	return enqueueOperationAsync(
 		folder,
 		() => cmd.buildCommandOnce(options || { watch: true }),
-		cancellationToken,
+		cancellationToken
 	);
 }
 
 export function installDependenciesAsync(
 	folder: vscode.WorkspaceFolder,
-	cancellationToken?: vscode.CancellationToken,
+	cancellationToken?: vscode.CancellationToken
 ) {
 	return enqueueOperationAsync(
 		folder,
 		() => cmd.installCommand({}),
-		cancellationToken,
+		cancellationToken
 	);
 }
 
 export function cleanProjectFolderAsync(
 	folder: vscode.WorkspaceFolder,
-	cancellationToken?: vscode.CancellationToken,
+	cancellationToken?: vscode.CancellationToken
 ) {
 	return enqueueOperationAsync(
 		folder,
 		() => cmd.cleanCommand({}),
-		cancellationToken,
+		cancellationToken
 	);
 }
 
 export function createEmptyProjectAsync(
 	folder: vscode.WorkspaceFolder,
 	projectKind: string,
-	cancellationToken?: vscode.CancellationToken,
+	cancellationToken?: vscode.CancellationToken
 ) {
 	return enqueueOperationAsync(
 		folder,
@@ -61,14 +61,14 @@ export function createEmptyProjectAsync(
 				gitIgnore: true,
 				update: true,
 			}),
-		cancellationToken,
+		cancellationToken
 	);
 }
 
 export function downloadSharedProjectAsync(
 	folder: vscode.WorkspaceFolder,
 	url: string,
-	cancellationToken?: vscode.CancellationToken,
+	cancellationToken?: vscode.CancellationToken
 ) {
 	return enqueueOperationAsync(
 		folder,
@@ -79,47 +79,47 @@ export function downloadSharedProjectAsync(
 				importUrl: url,
 				update: true,
 			}),
-		cancellationToken,
+		cancellationToken
 	);
 }
 
 export function listHardwareVariantsAsync(
 	folder: vscode.WorkspaceFolder,
-	cancellationToken?: vscode.CancellationToken,
+	cancellationToken?: vscode.CancellationToken
 ) {
 	return enqueueOperationAsync(
 		folder,
 		() => cmd.listHardwareVariantsAsync({}),
-		cancellationToken,
+		cancellationToken
 	);
 }
 
 export function getAppTargetAsync(
 	folder: vscode.WorkspaceFolder,
-	cancellationToken?: vscode.CancellationToken,
+	cancellationToken?: vscode.CancellationToken
 ) {
 	return enqueueOperationAsync(
 		folder,
 		() => cmd.getAppTargetAsync({}),
-		cancellationToken,
+		cancellationToken
 	);
 }
 
 export function getTargetConfigAsync(
 	folder: vscode.WorkspaceFolder,
-	cancellationToken?: vscode.CancellationToken,
+	cancellationToken?: vscode.CancellationToken
 ) {
 	return enqueueOperationAsync(
 		folder,
 		() => cmd.getTargetConfigAsync({}),
-		cancellationToken,
+		cancellationToken
 	);
 }
 
 export function addDependencyAsync(
 	folder: vscode.WorkspaceFolder,
 	repo: string,
-	cancellationToken?: vscode.CancellationToken,
+	cancellationToken?: vscode.CancellationToken
 ) {
 	return enqueueOperationAsync(
 		folder,
@@ -127,9 +127,9 @@ export function addDependencyAsync(
 			cmd.addCommand(
 				repo,
 				undefined as any /* the name is optional */,
-				{},
+				{}
 			),
-		cancellationToken,
+		cancellationToken
 	);
 }
 
@@ -140,7 +140,7 @@ export function addDependencyAsync(
 function enqueueOperationAsync<U>(
 	folder: vscode.WorkspaceFolder,
 	action: () => Promise<U>,
-	cancellationToken?: vscode.CancellationToken,
+	cancellationToken?: vscode.CancellationToken
 ): Promise<U> {
 	return new Promise((resolve, reject) => {
 		const op = {
