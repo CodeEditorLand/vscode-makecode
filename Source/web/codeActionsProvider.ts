@@ -7,7 +7,9 @@ export function codeActionsProvider() {
 		{
 			provideCodeActions(document, range, context, token) {
 				const jresNodes = getCurrentJresNodes();
-				if (!jresNodes) return undefined;
+				if (!jresNodes) {
+					return undefined;
+				}
 				const start = range.start;
 				const line = document.lineAt(start.line);
 				const matchRegex =

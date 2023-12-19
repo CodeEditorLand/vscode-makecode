@@ -291,12 +291,16 @@ async function buildCommand() {
 				"workbench.files.action.refreshFilesExplorer",
 			);
 
-			if (!result.binaryPath) return;
+			if (!result.binaryPath) {
+				return;
+			}
 
 			const showNotifcationConfig = vscode.workspace
 				.getConfiguration()
 				.get("makecode.showCompileNotification");
-			if (!showNotifcationConfig) return;
+			if (!showNotifcationConfig) {
+				return;
+			}
 
 			setTimeout(async () => {
 				const dontShowAgain = vscode.l10n.t("Don't show this again");
@@ -385,7 +389,7 @@ export async function importUrlCommand(
 	if (!workspace) {
 		if (match) {
 			vscode.workspace.updateWorkspaceFolders(0, 0, {
-				uri: vscode.Uri.parse("mkcdfs:/" + url),
+				uri: vscode.Uri.parse(`mkcdfs:/${url}`),
 				name: vscode.l10n.t("Imported Project ({0})", url),
 			});
 			await vscode.commands.executeCommand(
@@ -434,7 +438,9 @@ export async function importUrlCommand(
 async function pickHardwareVariantAsync(workspace: vscode.WorkspaceFolder) {
 	const variants = await getHardwareVariantsAsync(workspace);
 
-	if (variants.length <= 1) return;
+	if (variants.length <= 1) {
+		return;
+	}
 
 	const qp = vscode.window.createQuickPick<HardwareQuickpick>();
 	qp.items = variants;
@@ -501,7 +507,7 @@ export async function simulateCommand(context: vscode.ExtensionContext) {
 
 	Simulator.createOrShow(context);
 	if (clearBuildListener) {
-		Simulator.currentSimulator!.addDisposable(
+		Simulator.currentSimulator?.addDisposable(
 			new vscode.Disposable(clearBuildListener),
 		);
 	}
@@ -582,7 +588,9 @@ async function createCommand() {
 
 	const input = await showQuickPickAsync(qp);
 
-	if (!input) return;
+	if (!input) {
+		return;
+	}
 
 	let projectName = await vscode.window.showInputBox({
 		prompt: vscode.l10n.t("Enter a name for this project"),
@@ -722,7 +730,7 @@ async function addDependencyCommandAsync() {
 			label: ext,
 		}));
 		const newQpItems = [...defaultPreferredExtensions];
-		if (!!qp.value) {
+		if (qp.value) {
 			const userEnteredSuggestion = {
 				id: qp.value,
 				label: qp.value,
@@ -813,7 +821,9 @@ async function removeDependencyCommandAsync() {
 		canPickMany: true,
 	});
 
-	if (!toRemove?.length) return;
+	if (!toRemove?.length) {
+		return;
+	}
 
 	for (const ext of toRemove) {
 		delete pxtJson.dependencies[ext.label];

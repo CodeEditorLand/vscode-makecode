@@ -143,7 +143,7 @@ export class BuildWatcher {
 
 		// if already building, bail out
 		if (this.building) {
-			console.log(` build in progress, waiting...`);
+			console.log(" build in progress, waiting...");
 			return;
 		}
 

@@ -106,7 +106,9 @@ export class VFS implements vscode.FileSystemProvider {
 		const uriPath = uri.path;
 
 		const parts = uriPath.split(/\/|\\/);
-		while (!parts[0] && parts.length) parts.shift();
+		while (!parts[0] && parts.length) {
+			parts.shift();
+		}
 
 		if (parts.length) {
 			if (/^(?:S?\d{4}[\d\-]+|_[a-zA-Z0-9]{10,})$/.test(parts[0])) {
@@ -165,11 +167,11 @@ export class VFS implements vscode.FileSystemProvider {
 			const shareId =
 				/^(S?\d{4}[\d\-]+|_[a-zA-Z0-9]{10,})\.code-workspace$/.exec(
 					name,
-				)![1];
+				)?.[1];
 			await vscode.workspace.fs.writeFile(
 				workspacePath,
 				new TextEncoder().encode(
-					JSON.stringify({ folders: [{ path: "./" + shareId }] }),
+					JSON.stringify({ folders: [{ path: `./${shareId}` }] }),
 				),
 			);
 		}

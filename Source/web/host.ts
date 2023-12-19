@@ -91,7 +91,9 @@ function getFolderName() {
 function rmFolderPrefix(p: string) {
 	const cwd = getFolderName();
 	p = p.replace(/^[\/]+/, "");
-	if (p.startsWith(cwd)) return p.slice(cwd.length);
+	if (p.startsWith(cwd)) {
+		return p.slice(cwd.length);
+	}
 	return p;
 }
 
@@ -202,7 +204,7 @@ export function setActiveWorkspace(folder: vscode.WorkspaceFolder) {
 
 export function activeWorkspace() {
 	if (!_activeWorkspace) {
-		_activeWorkspace = vscode.workspace.workspaceFolders![0];
+		_activeWorkspace = vscode.workspace.workspaceFolders?.[0];
 	}
 	return _activeWorkspace;
 }
@@ -213,7 +215,9 @@ export async function findFilesAsync(
 	matchWholeName: boolean,
 	maxDepth = 5,
 ) {
-	if (maxDepth === 0) return [];
+	if (maxDepth === 0) {
+		return [];
+	}
 
 	const files = await vscode.workspace.fs.readDirectory(root);
 	const result: vscode.Uri[] = [];
@@ -232,7 +236,7 @@ export async function findFilesAsync(
 				if (fileName === extension) {
 					result.push(uri);
 				}
-			} else if (fileName.endsWith("." + extension)) {
+			} else if (fileName.endsWith(`.${extension}`)) {
 				result.push(uri);
 			}
 		}

@@ -151,23 +151,26 @@ export class AssetEditor {
 		}
 
 		switch (message.type) {
-			case "event":
+			case "event": {
 				this.handleSimulatorEventAsync(message);
 				break;
+			}
 		}
 	}
 
 	async handleSimulatorEventAsync(message: any) {
 		switch (message.kind) {
-			case "ready":
+			case "ready": {
 				await this.onReadyMessageReceivedAsync();
 				break;
-			case "done-clicked":
+			}
+			case "done-clicked": {
 				const saved = await this.sendMessageAsync({
 					type: "save",
 				});
 				this.throttledSave(saved.files);
 				break;
+			}
 		}
 	}
 
@@ -197,7 +200,7 @@ export class AssetEditor {
 		}
 
 		switch (this.editing.type) {
-			case "edit":
+			case "edit": {
 				this.sendMessageAsync({
 					type: "open",
 					assetType: this.editing.assetType,
@@ -206,7 +209,8 @@ export class AssetEditor {
 					palette: await readProjectPaletteAsync(),
 				});
 				break;
-			case "duplicate":
+			}
+			case "duplicate": {
 				this.sendMessageAsync({
 					type: "duplicate",
 					assetType: this.editing.assetType,
@@ -215,7 +219,8 @@ export class AssetEditor {
 					palette: await readProjectPaletteAsync(),
 				});
 				break;
-			case "create":
+			}
+			case "create": {
 				this.sendMessageAsync({
 					type: "create",
 					displayName: this.editing.displayName,
@@ -224,6 +229,7 @@ export class AssetEditor {
 					palette: await readProjectPaletteAsync(),
 				});
 				break;
+			}
 		}
 	}
 }
@@ -235,8 +241,8 @@ export class AssetEditorSerializer implements vscode.WebviewPanelSerializer {
 	) {
 		AssetEditor.revive(webviewPanel);
 		await AssetEditor.currentEditor?.openAssetAsync(
-			state.editing!.assetType,
-			state.editing!.assetId,
+			state.editing?.assetType,
+			state.editing?.assetId,
 		);
 	}
 }
@@ -275,7 +281,7 @@ async function readProjectJResAsync() {
 
 		const pathParts = file.path.split(".");
 		const tsFile = file.with({
-			path: pathParts.slice(0, pathParts.length - 1).join(".") + ".ts",
+			path: `${pathParts.slice(0, pathParts.length - 1).join(".")}.ts`,
 		});
 
 		try {
@@ -286,7 +292,7 @@ async function readProjectJResAsync() {
 		}
 
 		const gtsFile = file.with({
-			path: pathParts.slice(0, pathParts.length - 1).join(".") + ".ts",
+			path: `${pathParts.slice(0, pathParts.length - 1).join(".")}.ts`,
 		});
 
 		try {
@@ -303,7 +309,9 @@ async function readProjectJResAsync() {
 async function readProjectPaletteAsync() {
 	const config = await readFileAsync("./pxt.json", "utf8");
 	const parsed = JSON.parse(config);
-	if (parsed.palette) return parsed.palette as string[];
+	if (parsed.palette) {
+		return parsed.palette as string[];
+	}
 }
 
 async function saveFilesAsync(files: { [index: string]: string }) {

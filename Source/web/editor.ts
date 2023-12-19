@@ -184,12 +184,14 @@ export class MakeCodeEditor {
 		}
 
 		switch (message.type) {
-			case "pxthost":
+			case "pxthost": {
 				this.handleHostMessage(message);
 				break;
-			case "ready":
+			}
+			case "ready": {
 				this.onReadyMessageReceivedAsync();
 				break;
+			}
 		}
 	}
 
@@ -265,8 +267,8 @@ export class MakeCodeEditor {
 
 		this.panel.webview.html = "";
 		const hash = this.testHeaderId
-			? "header:" + this.testHeaderId
-			: "testproject:" + this.extHeaderId;
+			? `header:${this.testHeaderId}`
+			: `testproject:${this.extHeaderId}`;
 		const simulatorHTML = await getMakeCodeEditorHtmlAsync(
 			this.panel.webview,
 			hash,
@@ -345,7 +347,7 @@ async function getMakeCodeEditorHtmlAsync(
 
 	return contents
 		.replace(/@RES@\/([\w\-\.]+)/g, (f, fn) => pathURL(fn))
-		.replace("@EDITORURL@", editorUrl + "#" + hash);
+		.replace("@EDITORURL@", `${editorUrl}#${hash}`);
 }
 
 async function createProjectBlobAsync(workspace: vscode.WorkspaceFolder) {

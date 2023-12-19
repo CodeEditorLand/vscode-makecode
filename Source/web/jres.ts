@@ -97,7 +97,7 @@ export function fireChangeEvent() {
 }
 
 export async function deleteAssetAsync(node: JResTreeNode) {
-	if (!node.sourceFile || !node.id) {
+	if (!(node.sourceFile && node.id)) {
 		return;
 	}
 
@@ -115,9 +115,9 @@ export async function deleteAssetAsync(node: JResTreeNode) {
 		const entry = sourceJRes[id];
 		if (
 			entry?.namespace === ns ||
-			entry?.namespace === ns + "." ||
+			entry?.namespace === `${ns}.` ||
 			sourceJRes["*"]?.namespace === ns ||
-			sourceJRes["*"]?.namespace === ns + "."
+			sourceJRes["*"]?.namespace === `${ns}.`
 		) {
 			delete sourceJRes[id];
 		}
@@ -137,7 +137,9 @@ export function getCurrentJresNodes() {
 async function readProjectJResAsync() {
 	const nodes: JResTreeNode[] = [];
 	const ws = activeWorkspace()?.uri;
-	if (!ws) return [];
+	if (!ws) {
+		return [];
+	}
 
 	const files = await findFilesAsync("jres", activeWorkspace().uri, false);
 
@@ -172,13 +174,11 @@ async function readProjectJResAsync() {
 					uri: vscode.Uri.from({
 						scheme: "vscode.env.uriScheme",
 						authority: "makecode",
-						path:
-							"/" +
-							namespaceJoin(
-								"asset",
-								mimeTypeToKind(defaultMimeType!),
-								id!,
-							),
+						path: `/${namespaceJoin(
+							"asset",
+							mimeTypeToKind(defaultMimeType!),
+							id!,
+						)}`,
 					}),
 				});
 			} else {
@@ -193,16 +193,14 @@ async function readProjectJResAsync() {
 					uri: vscode.Uri.from({
 						scheme: "vscode.env.uriScheme",
 						authority: "makecode",
-						path:
-							"/" +
-							namespaceJoin(
-								"asset",
-								mimeTypeToKind(
-									jres[key].mimeType || defaultMimeType,
-									jres[key].tilemapTile,
-								),
-								id!,
+						path: `/${namespaceJoin(
+							"asset",
+							mimeTypeToKind(
+								jres[key].mimeType || defaultMimeType,
+								jres[key].tilemapTile,
 							),
+							id!,
+						)}`,
 					}),
 				});
 			}
@@ -242,9 +240,9 @@ function namespaceJoinCore(a: string, b: string) {
 	if (b.startsWith(".")) {
 		b = b.slice(1);
 	}
-	return a + "." + b;
+	return `${a}.${b}`;
 }
 
 function kindToDisplayName(kind: string) {
-	return kind.charAt(0).toUpperCase() + kind.substring(1) + "s";
+	return `${kind.charAt(0).toUpperCase() + kind.substring(1)}s`;
 }

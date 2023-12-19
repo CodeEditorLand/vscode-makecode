@@ -9,13 +9,13 @@ export async function shareProjectAsync(workspace: vscode.WorkspaceFolder) {
 	const req = await createShareLinkRequestAsync(workspace);
 
 	const res = await httpRequestCoreAsync({
-		url: apiRoot + "/api/scripts",
+		url: `${apiRoot}/api/scripts`,
 		data: req,
 	});
 
 	if (res.statusCode === 200) {
 		const resJSON = JSON.parse(res.text!);
-		return apiRoot + "/" + resJSON.shortid;
+		return `${apiRoot}/${resJSON.shortid}`;
 	}
 
 	return undefined;
@@ -66,7 +66,7 @@ async function createShareLinkRequestAsync(workspace: vscode.WorkspaceFolder) {
 		targetVersion: target.versions.target,
 		description:
 			parsed.description ||
-			`Made with ❤️ in MakeCode for Visual Studio Code .`,
+			"Made with ❤️ in MakeCode for Visual Studio Code .",
 		editor: "tsprj",
 		header: JSON.stringify(header),
 		text: JSON.stringify(files),

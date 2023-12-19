@@ -19,7 +19,9 @@ export async function getHardwareVariantsAsync(
 ) {
 	const variants = await listHardwareVariantsAsync(workspace);
 
-	if (variants.length === 1) return [];
+	if (variants.length === 1) {
+		return [];
+	}
 
 	const info = await fetchGalleriesAsync(workspace, "hardware");
 
@@ -27,12 +29,15 @@ export async function getHardwareVariantsAsync(
 
 	for (const card of info.filter((c) => !!c.variant)) {
 		if (
-			!variants.some((v) => v.name === card.variant) ||
-			!card.name ||
-			!card.description ||
+			!(
+				variants.some((v) => v.name === card.variant) &&
+				card.name &&
+				card.description
+			) ||
 			disallowedHardwareVariants.indexOf(card.name) !== -1
-		)
+		) {
 			continue;
+		}
 
 		res.push({
 			label: card.name,
@@ -42,7 +47,9 @@ export async function getHardwareVariantsAsync(
 	}
 
 	for (const config of variants) {
-		if (config.name.toLowerCase() === "vm") continue;
+		if (config.name.toLowerCase() === "vm") {
+			continue;
+		}
 
 		res.push({
 			id: config.name,
@@ -69,11 +76,15 @@ async function fetchGalleriesAsync(
 
 	for (const target of supportedTargets) {
 		const md = await fetchMarkdownAsync(target, mdName);
-		if (!md) continue;
+		if (!md) {
+			continue;
+		}
 
 		const galleries = parseGalleryMardown(md);
 
-		if (!galleries.length) continue;
+		if (!galleries.length) {
+			continue;
+		}
 
 		for (const gallery of galleries) {
 			res.push(...gallery.cards);
@@ -98,19 +109,23 @@ async function getSupportedTargetsAsync(workspace: vscode.WorkspaceFolder) {
 
 async function fetchMarkdownAsync(target: string, path: string) {
 	const res = await httpRequestCoreAsync({
-		url: apiRoot + "/api/md/" + target + "/" + path,
+		url: `${apiRoot}/api/md/${target}/${path}`,
 	});
 
-	if (res.statusCode === 200) return res.text;
+	if (res.statusCode === 200) {
+		return res.text;
+	}
 
-	console.log("Could not fetch hardware info for " + target);
+	console.log(`Could not fetch hardware info for ${target}`);
 
 	return undefined;
 }
 
 // copied form pxt
 function parseGalleryMardown(md: string) {
-	if (!md) return [];
+	if (!md) {
+		return [];
+	}
 
 	// second level titles are categories
 	// ## foo bar
@@ -129,12 +144,17 @@ function parseGalleryMardown(md: string) {
 			incard = false;
 			if (name && cardsSource) {
 				const cards = parseCodeCards(cardsSource);
-				if (cards?.length) galleries.push({ name, cards });
-				else console.log(`invalid gallery format`);
+				if (cards?.length) {
+					galleries.push({ name, cards });
+				} else {
+					console.log("invalid gallery format");
+				}
 			}
 			cardsSource = "";
 			name = undefined;
-		} else if (incard) cardsSource += line + "\n";
+		} else if (incard) {
+			cardsSource += `${line}\n`;
+		}
 	});
 
 	return galleries;
@@ -144,8 +164,12 @@ function parseGalleryMardown(md: string) {
 function parseCodeCards(md: string): pxt.CodeCard[] | undefined {
 	// try to parse code cards as JSON
 	let cards = tryJSONParse(md) as pxt.CodeCard[];
-	if (cards && !Array.isArray(cards)) cards = [cards];
-	if (cards?.length) return cards;
+	if (cards && !Array.isArray(cards)) {
+		cards = [cards];
+	}
+	if (cards?.length) {
+		return cards;
+	}
 
 	// not json, try parsing as sequence of key,value pairs, with line splits
 	cards = md
@@ -154,8 +178,9 @@ function parseCodeCards(md: string): pxt.CodeCard[] | undefined {
 		.map((cmd) => {
 			const cc: any = {};
 			cmd.replace(/^\s*(?:-|\*)\s+(\w+)\s*:\s*(.*)$/gm, (m, n, v) => {
-				if (n == "flags") cc[n] = v.split(",");
-				else if (n === "otherAction") {
+				if (n === "flags") {
+					cc[n] = v.split(",");
+				} else if (n === "otherAction") {
 					const parts: string[] = v
 						.split(",")
 						.map((p: string) => p?.trim());
@@ -165,13 +190,17 @@ function parseCodeCards(md: string): pxt.CodeCard[] | undefined {
 						editor: parts[1],
 						cardType: parts[2],
 					});
-				} else cc[n] = v;
+				} else {
+					cc[n] = v;
+				}
 				return "";
 			});
 			return !!Object.keys(cc).length && (cc as pxt.CodeCard);
 		})
 		.filter((cc) => !!cc) as pxt.CodeCard[];
-	if (cards?.length) return cards;
+	if (cards?.length) {
+		return cards;
+	}
 
 	return undefined;
 }

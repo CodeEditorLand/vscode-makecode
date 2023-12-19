@@ -44,12 +44,16 @@ export function debounce(
 		const args = arguments;
 		const later = () => {
 			timeout = null;
-			if (!immediate) func.apply(this, args as any);
+			if (!immediate) {
+				func.apply(this, args as any);
+			}
 		};
 		const callNow = immediate && !timeout;
 		clearTimeout(timeout);
 		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(this, args as any);
+		if (callNow) {
+			func.apply(this, args as any);
+		}
 		return timeout;
 	};
 }
@@ -86,10 +90,12 @@ export async function setPxtJson(
 }
 
 function getRandomBuf(buf: Uint8Array) {
-	if (crypto) crypto.getRandomValues(buf);
-	else {
-		for (let i = 0; i < buf.length; ++i)
+	if (crypto) {
+		crypto.getRandomValues(buf);
+	} else {
+		for (let i = 0; i < buf.length; ++i) {
 			buf[i] = Math.floor(Math.random() * 255);
+		}
 	}
 }
 
@@ -103,20 +109,7 @@ export function guidGen() {
 	function f() {
 		return (randomUint32() | 0x10000).toString(16).slice(-4);
 	}
-	return (
-		f() +
-		f() +
-		"-" +
-		f() +
-		"-4" +
-		f().slice(-3) +
-		"-" +
-		f() +
-		"-" +
-		f() +
-		f() +
-		f()
-	);
+	return `${f() + f()}-${f()}-4${f().slice(-3)}-${f()}-${f()}${f()}${f()}`;
 }
 
 export function showQuickPickAsync<U extends vscode.QuickPickItem>(

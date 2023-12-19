@@ -108,25 +108,26 @@ export class Simulator {
 
 	handleSimulatorMessage(message: any) {
 		switch (message.type) {
-			case "fetch-js":
+			case "fetch-js": {
 				this.postMessage({
 					...message,
 					text: this.binaryJS,
 				});
 				break;
-			case "bulkserial":
+			}
+			case "bulkserial": {
 				const data: { data: string; time: number }[] = message.data;
 				for (const entry of data) {
 					Simulator.simconsole.appendLine(entry.data);
 				}
 				break;
+			}
 			case "debugger":
 				if (
 					message.subtype === "breakpoint" &&
 					message.exceptionMessage
 				) {
-					let stackTrace =
-						"Uncaught " + message.exceptionMessage + "\n";
+					let stackTrace = `Uncaught ${message.exceptionMessage}\n`;
 					for (const s of message.stackframes) {
 						const fi = s.funcInfo;
 						stackTrace += `   at ${fi.functionName} (${
@@ -176,10 +177,10 @@ async function getSimHtmlAsync() {
 	let customJs = simloaderFiles["custom.js"];
 	const customPath = "custom.js";
 
-	if (await existsAsync("assets/" + customPath)) {
-		customJs = await readFileAsync("assets/" + customPath, "utf8");
-	} else if (await existsAsync("assets/js/" + customPath)) {
-		customJs = await readFileAsync("assets/js/" + customPath, "utf8");
+	if (await existsAsync(`assets/${customPath}`)) {
+		customJs = await readFileAsync(`assets/${customPath}`, "utf8");
+	} else if (await existsAsync(`assets/js/${customPath}`)) {
+		customJs = await readFileAsync(`assets/js/${customPath}`, "utf8");
 	}
 
 	// In order to avoid using a server, we inline the loader and custom js files

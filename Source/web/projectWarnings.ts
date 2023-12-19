@@ -90,9 +90,7 @@ export async function maybeShowDependenciesNotificationAsync() {
 			if (Object.keys(parsed.dependencies).length > 0) {
 				foldersToFix.push(folder);
 			}
-		} catch {
-			continue;
-		}
+		} catch {}
 	}
 
 	if (foldersToFix.length === 0) {
