@@ -1,27 +1,7 @@
 {
 	"name": "pxt-vscode-web",
 	"displayName": "Microsoft MakeCode Arcade",
-	"version": "0.0.1",
-	"private": false,
 	"description": "Make games and learn code. Create retro arcade style video games, art, and music inside VS Code.",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandMakecode#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandMakecode/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandMakecode.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
 	"browser": "./dist/web/extension.js",
 	"scripts": {
 		"Document": "Document 'Source/**/*.ts'",
@@ -345,14 +325,10 @@
 	},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"assert": "2.1.0",
 		"process": "0.11.10",
 		"ts-loader": "9.5.1",
 		"tslib": "2.6.2"
-	},
-	"publishConfig": {
-		"access": "public"
 	},
 	"icon": "media/logo-128x128.png",
 	"preview": true
