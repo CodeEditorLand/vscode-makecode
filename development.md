@@ -44,7 +44,7 @@ vsce package
 ## Linking pxt-mkc
 
 If you want to develop using your local clone of
-[pxt-mkc](https://github.com/microsoft/pxt-mkc), you need to link the
+[`pxt-mkc`](https://github.com/microsoft/pxt-mkc), you need to link the
 `makecode-core` and `makecode-browser` packages.
 
 ```
