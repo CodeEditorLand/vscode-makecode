@@ -7,6 +7,7 @@ export class VFS implements vscode.FileSystemProvider {
 	private initializedDirs: { [index: string]: boolean } = {};
 	private initializePromises: { [index: string]: Promise<void> | undefined } =
 		{};
+
 	constructor(private context: vscode.ExtensionContext) {}
 
 	// --- manage file metadata
@@ -52,6 +53,7 @@ export class VFS implements vscode.FileSystemProvider {
 
 	async delete(uri: vscode.Uri, options: { readonly recursive: boolean }) {
 		await vscode.workspace.fs.delete(await this.remapURI(uri), options);
+
 		const dirname = uri.with({ path: path.posix.dirname(uri.path) });
 		this._fireSoon(
 			{ type: vscode.FileChangeType.Changed, uri: dirname },
@@ -61,6 +63,7 @@ export class VFS implements vscode.FileSystemProvider {
 
 	async createDirectory(uri: vscode.Uri) {
 		await vscode.workspace.fs.createDirectory(await this.remapURI(uri));
+
 		const dirname = uri.with({ path: path.posix.dirname(uri.path) });
 
 		this._fireSoon(
@@ -72,6 +75,7 @@ export class VFS implements vscode.FileSystemProvider {
 	private async existsAsync(uri: vscode.Uri) {
 		try {
 			const stat = await vscode.workspace.fs.stat(uri);
+
 			return !!stat;
 		} catch (e) {
 			return false;
@@ -107,6 +111,7 @@ export class VFS implements vscode.FileSystemProvider {
 		const uriPath = uri.path;
 
 		const parts = uriPath.split(/\/|\\/);
+
 		while (!parts[0] && parts.length) parts.shift();
 
 		if (parts.length) {
@@ -142,6 +147,7 @@ export class VFS implements vscode.FileSystemProvider {
 			this.context.globalStorageUri,
 			shareId,
 		);
+
 		const pxtJSON = vscode.Uri.joinPath(projectDir, "pxt.json");
 
 		if (!(await this.existsAsync(projectDir))) {
@@ -162,6 +168,7 @@ export class VFS implements vscode.FileSystemProvider {
 			this.context.globalStorageUri,
 			name,
 		);
+
 		if (!(await this.existsAsync(workspacePath))) {
 			const shareId =
 				/^(S?\d{4}[\d\-]+|_[a-zA-Z0-9]{10,})\.code-workspace$/.exec(

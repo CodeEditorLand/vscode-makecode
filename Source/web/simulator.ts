@@ -37,6 +37,7 @@ export class Simulator {
 				undefined /** keep current column **/,
 				true,
 			);
+
 			return;
 		}
 
@@ -86,7 +87,9 @@ export class Simulator {
 	async simulateAsync(binaryJS: string) {
 		this.binaryJS = binaryJS;
 		this.panel.webview.html = "";
+
 		const simulatorHTML = await getSimHtmlAsync();
+
 		if (this.simState == null) {
 			this.simState = await extensionContext.workspaceState.get(
 				"simstate",
@@ -113,13 +116,17 @@ export class Simulator {
 					...message,
 					text: this.binaryJS,
 				});
+
 				break;
+
 			case "bulkserial":
 				const data: { data: string; time: number }[] = message.data;
+
 				for (const entry of data) {
 					Simulator.simconsole.appendLine(entry.data);
 				}
 				break;
+
 			case "debugger":
 				if (
 					message.subtype === "breakpoint" &&
@@ -127,6 +134,7 @@ export class Simulator {
 				) {
 					let stackTrace =
 						"Uncaught " + message.exceptionMessage + "\n";
+
 					for (let s of message.stackframes) {
 						let fi = s.funcInfo;
 						stackTrace += `   at ${fi.functionName} (${
@@ -164,6 +172,7 @@ export class SimulatorSerializer implements vscode.WebviewPanelSerializer {
 const vscodeExtensionExtraLoaderJs = `
 window.addEventListener("DOMContentLoaded", () => {
     const fs = document.getElementById("fullscreen");
+
     if (fs) {
         fs.remove();
     }
@@ -172,8 +181,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
 async function getSimHtmlAsync() {
 	const index = simloaderFiles["index.html"];
+
 	const loaderJs = simloaderFiles["loader.js"];
+
 	let customJs = simloaderFiles["custom.js"];
+
 	const customPath = "custom.js";
 
 	if (await existsAsync("assets/" + customPath)) {

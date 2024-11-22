@@ -66,10 +66,12 @@ async function fetchGalleriesAsync(
 	mdName: string,
 ) {
 	const supportedTargets = await getSupportedTargetsAsync(workspace);
+
 	const res: pxt.CodeCard[] = [];
 
 	for (const target of supportedTargets) {
 		const md = await fetchMarkdownAsync(target, mdName);
+
 		if (!md) continue;
 
 		const galleries = parseGalleryMardown(md);
@@ -89,7 +91,9 @@ async function getSupportedTargetsAsync(workspace: vscode.WorkspaceFolder) {
 		const config = await readTextFileAsync(
 			vscode.Uri.joinPath(workspace.uri, "pxt.json"),
 		);
+
 		const parsed = JSON.parse(config) as pxt.PackageConfig;
+
 		if (parsed.supportedTargets) {
 			return parsed.supportedTargets;
 		}
@@ -117,8 +121,11 @@ function parseGalleryMardown(md: string) {
 	// ## foo bar
 	// fenced code ```cards are sections of cards
 	const galleries: { name: string; cards: pxt.CodeCard[] }[] = [];
+
 	let incard = false;
+
 	let name: string | undefined = undefined;
+
 	let cardsSource: string = "";
 	md.split(/\r?\n/).forEach((line) => {
 		// new category
@@ -128,9 +135,12 @@ function parseGalleryMardown(md: string) {
 			incard = true;
 		} else if (/^(### ~|```)$/.test(line)) {
 			incard = false;
+
 			if (name && cardsSource) {
 				const cards = parseCodeCards(cardsSource);
+
 				if (cards?.length) galleries.push({ name, cards });
+
 				else console.log(`invalid gallery format`);
 			}
 			cardsSource = "";
@@ -145,7 +155,9 @@ function parseGalleryMardown(md: string) {
 function parseCodeCards(md: string): pxt.CodeCard[] | undefined {
 	// try to parse code cards as JSON
 	let cards = tryJSONParse(md) as pxt.CodeCard[];
+
 	if (cards && !Array.isArray(cards)) cards = [cards];
+
 	if (cards?.length) return cards;
 
 	// not json, try parsing as sequence of key,value pairs, with line splits
@@ -156,10 +168,12 @@ function parseCodeCards(md: string): pxt.CodeCard[] | undefined {
 			let cc: any = {};
 			cmd.replace(/^\s*(?:-|\*)\s+(\w+)\s*:\s*(.*)$/gm, (m, n, v) => {
 				if (n == "flags") cc[n] = v.split(",");
+
 				else if (n === "otherAction") {
 					const parts: string[] = v
 						.split(",")
 						.map((p: string) => p?.trim());
+
 					const oas = cc["otherActions"] || (cc["otherActions"] = []);
 					oas.push({
 						url: parts[0],
@@ -167,11 +181,14 @@ function parseCodeCards(md: string): pxt.CodeCard[] | undefined {
 						cardType: parts[2],
 					});
 				} else cc[n] = v;
+
 				return "";
 			});
+
 			return !!Object.keys(cc).length && (cc as pxt.CodeCard);
 		})
 		.filter((cc) => !!cc) as pxt.CodeCard[];
+
 	if (cards?.length) return cards;
 
 	return undefined;

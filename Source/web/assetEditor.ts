@@ -11,6 +11,7 @@ import { readTextFileAsync, throttle } from "./util";
 
 let extensionContext: vscode.ExtensionContext;
 // const assetUrl = "http://localhost:3232/asseteditor.html";
+
 const assetUrl = "https://arcade.makecode.com/--asseteditor";
 
 interface EditingState {
@@ -51,6 +52,7 @@ export class AssetEditor {
 				undefined /** keep current column **/,
 				true,
 			);
+
 			return;
 		}
 
@@ -109,7 +111,9 @@ export class AssetEditor {
 
 	async openURIAsync(uri: vscode.Uri) {
 		const parts = uri.path.split(".");
+
 		const assetType = parts[1];
+
 		const assetId = parts.slice(2).join(".");
 		await this.openAssetAsync(assetType, assetId);
 	}
@@ -148,12 +152,14 @@ export class AssetEditor {
 		if (this.pendingMessages[message.id]) {
 			this.pendingMessages[message.id](message);
 			delete this.pendingMessages[message.id];
+
 			return;
 		}
 
 		switch (message.type) {
 			case "event":
 				this.handleSimulatorEventAsync(message);
+
 				break;
 		}
 	}
@@ -162,12 +168,15 @@ export class AssetEditor {
 		switch (message.kind) {
 			case "ready":
 				await this.onReadyMessageReceivedAsync();
+
 				break;
+
 			case "done-clicked":
 				const saved = await this.sendMessageAsync({
 					type: "save",
 				});
 				this.throttledSave(saved.files);
+
 				break;
 		}
 	}
@@ -188,6 +197,7 @@ export class AssetEditor {
 
 	protected async initWebviewHtmlAsync() {
 		this.panel.webview.html = "";
+
 		const simulatorHTML = await getAssetEditorHtmlAsync(this.panel.webview);
 		this.panel.webview.html = simulatorHTML;
 	}
@@ -206,7 +216,9 @@ export class AssetEditor {
 					files: await readProjectJResAsync(),
 					palette: await readProjectPaletteAsync(),
 				});
+
 				break;
+
 			case "duplicate":
 				this.sendMessageAsync({
 					type: "duplicate",
@@ -215,7 +227,9 @@ export class AssetEditor {
 					files: await readProjectJResAsync(),
 					palette: await readProjectPaletteAsync(),
 				});
+
 				break;
+
 			case "create":
 				this.sendMessageAsync({
 					type: "create",
@@ -224,6 +238,7 @@ export class AssetEditor {
 					files: await readProjectJResAsync(),
 					palette: await readProjectPaletteAsync(),
 				});
+
 				break;
 		}
 	}
@@ -248,6 +263,7 @@ async function getAssetEditorHtmlAsync(webview: vscode.Webview) {
 		"resources",
 		"assetframe.html",
 	);
+
 	const contents = await readTextFileAsync(uri);
 
 	const pathURL = (s: string) =>
@@ -268,6 +284,7 @@ async function getAssetEditorHtmlAsync(webview: vscode.Webview) {
 
 async function readProjectJResAsync() {
 	const files = await findFilesAsync("jres", activeWorkspace().uri, false);
+
 	const fileSystem: { [index: string]: string } = {};
 
 	for (const file of files) {
@@ -275,6 +292,7 @@ async function readProjectJResAsync() {
 		fileSystem[vscode.workspace.asRelativePath(file)] = contents;
 
 		const pathParts = file.path.split(".");
+
 		const tsFile = file.with({
 			path: pathParts.slice(0, pathParts.length - 1).join(".") + ".ts",
 		});
@@ -303,14 +321,19 @@ async function readProjectJResAsync() {
 
 async function readProjectPaletteAsync() {
 	const config = await readFileAsync("./pxt.json", "utf8");
+
 	const parsed = JSON.parse(config);
+
 	if (parsed.palette) return parsed.palette as string[];
 }
 
 async function saveFilesAsync(files: { [index: string]: string }) {
 	const config = await readFileAsync("./pxt.json", "utf8");
+
 	const parsed = JSON.parse(config);
+
 	const configFiles = parsed.files as string[];
+
 	let didChangeConfig = false;
 
 	for (const file of Object.keys(files)) {
@@ -342,6 +365,7 @@ async function saveFilesAsync(files: { [index: string]: string }) {
  */
 export function insertGeneratedFile(arr: string[], toInsert: string) {
 	let lastGenIndex = -1;
+
 	let lastJRESIndex = -1;
 
 	const basename = toInsert.split(".").slice(0, -1).join(".");
@@ -351,10 +375,12 @@ export function insertGeneratedFile(arr: string[], toInsert: string) {
 
 		if (currentBasename === basename) {
 			arr.splice(i + 1, 0, toInsert);
+
 			return;
 		}
 
 		const current = arr[i].toLowerCase();
+
 		if (current.endsWith(".g.ts") || current.endsWith(".g.jres")) {
 			lastGenIndex = i;
 		} else if (current.endsWith(".jres")) {

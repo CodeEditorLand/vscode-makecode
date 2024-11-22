@@ -52,6 +52,7 @@ export class BuildWatcher {
 		const fsWatcher = vscode.workspace.createFileSystemWatcher(
 			new vscode.RelativePattern(folder, "**"),
 		);
+
 		const watchHandler = (uri: vscode.Uri) => {
 			if (!this.running) {
 				return;
@@ -83,6 +84,7 @@ export class BuildWatcher {
 		}
 
 		this.running = false;
+
 		if (this.watcherDisposable) {
 			this.watcherDisposable.dispose();
 			this.watcherDisposable = undefined;
@@ -144,6 +146,7 @@ export class BuildWatcher {
 		// if already building, bail out
 		if (this.building) {
 			console.log(` build in progress, waiting...`);
+
 			return;
 		}
 
@@ -157,11 +160,14 @@ export class BuildWatcher {
 				// start a build
 				try {
 					this.building = true;
+
 					while (this.buildPending) {
 						this.buildPending = false;
+
 						const opts0 = {
 							...this.buildOpts,
 						};
+
 						if (!firstBuild) {
 							// if not first time, don't update
 							opts0.update = false;
@@ -170,7 +176,9 @@ export class BuildWatcher {
 						clearBuildErrors();
 
 						this.newCancelToken();
+
 						const token = this.pendingCancelToken;
+
 						const result = await buildProjectAsync(
 							this.folder!,
 							this.buildOpts,
@@ -180,6 +188,7 @@ export class BuildWatcher {
 
 						if (result.diagnostics.length) {
 							reportBuildErrors(result);
+
 							for (const errorHandler of this.errorListeners) {
 								errorHandler(result.diagnostics);
 							}
@@ -226,6 +235,7 @@ export class BuildWatcher {
 			},
 			dispose: () => {
 				cancelEvent.dispose();
+
 				if (this.pendingCancelToken === tokenSource) {
 					this.pendingCancelToken = undefined;
 				}

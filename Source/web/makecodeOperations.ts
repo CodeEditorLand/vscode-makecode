@@ -12,6 +12,7 @@ interface Operation<U> {
 }
 
 let operationQueue: Operation<any>[] = [];
+
 let currentlyWorking = false;
 
 export function buildProjectAsync(
@@ -169,11 +170,13 @@ async function pokeQueueAsync() {
 
 	while (operationQueue.length) {
 		const op = operationQueue.shift()!;
+
 		if (op.cancellationToken?.isCancellationRequested) {
 			continue;
 		}
 
 		currentlyWorking = true;
+
 		setActiveWorkspace(op.folder);
 
 		try {

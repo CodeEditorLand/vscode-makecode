@@ -10,6 +10,7 @@ export async function maybeShowConfigNotificationAsync() {
 	}
 
 	const foldersToFix: vscode.WorkspaceFolder[] = [];
+
 	for (const folder of vscode.workspace.workspaceFolders) {
 		if (
 			await fileExistsAsync(
@@ -66,6 +67,7 @@ export async function maybeShowDependenciesNotificationAsync() {
 	}
 
 	const foldersToFix: vscode.WorkspaceFolder[] = [];
+
 	for (const folder of vscode.workspace.workspaceFolders) {
 		if (
 			!(await fileExistsAsync(
@@ -86,6 +88,7 @@ export async function maybeShowDependenciesNotificationAsync() {
 			const config = await readTextFileAsync(
 				vscode.Uri.joinPath(folder.uri, "pxt.json"),
 			);
+
 			const parsed = JSON.parse(config);
 
 			if (Object.keys(parsed.dependencies).length > 0) {
@@ -106,6 +109,7 @@ export async function maybeShowDependenciesNotificationAsync() {
 		),
 		vscode.l10n.t("Install dependencies"),
 	);
+
 	if (!selection) {
 		return;
 	}
@@ -129,6 +133,7 @@ export async function maybeShowDependenciesNotificationAsync() {
 					await installDependenciesAsync(folder);
 				} catch (e) {
 					let errorMessage = "";
+
 					if (typeof e === "string") {
 						errorMessage = e;
 					} else if (e instanceof Error) {

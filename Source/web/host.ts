@@ -38,6 +38,7 @@ export function createVsCodeHost(): Host {
 export function readFileAsync(path: string, encoding: "utf8"): Promise<string>;
 export async function readFileAsync(path: string, encoding?: "utf8") {
 	const contents = await vscode.workspace.fs.readFile(resolvePath(path));
+
 	if (encoding) {
 		return new TextDecoder().decode(contents);
 	}
@@ -71,7 +72,9 @@ async function rmdirAsync(path: string, options: any): Promise<void> {
 export async function existsAsync(path: string): Promise<boolean> {
 	try {
 		const resolvedPath = resolvePath(path);
+
 		const stat = await vscode.workspace.fs.stat(resolvedPath);
+
 		return true;
 	} catch (e) {
 		return false;
@@ -91,12 +94,15 @@ function getFolderName() {
 function rmFolderPrefix(p: string) {
 	const cwd = getFolderName();
 	p = p.replace(/^[\/]+/, "");
+
 	if (p.startsWith(cwd)) return p.slice(cwd.length);
+
 	return p;
 }
 
 async function listFilesAsync(directory: string, filename: string) {
 	const root = vscode.Uri.joinPath(activeWorkspace().uri, directory);
+
 	const files = await findFilesAsync(filename, root, true);
 
 	return files.map((uri) => {
@@ -110,6 +116,7 @@ async function listFilesAsync(directory: string, filename: string) {
 export function httpRequestCoreAsync(options: HttpRequestOptions) {
 	return new Promise<HttpResponse>((resolve, reject) => {
 		let client: XMLHttpRequest;
+
 		let resolved = false;
 
 		let headers = options.headers || {};
@@ -122,6 +129,7 @@ export function httpRequestCoreAsync(options: HttpRequestOptions) {
 
 			if (client.readyState === 4) {
 				resolved = true;
+
 				let res: HttpResponse = {
 					statusCode: client.status,
 					headers: {},
@@ -135,6 +143,7 @@ export function httpRequestCoreAsync(options: HttpRequestOptions) {
 				const allHeaders = client.getAllResponseHeaders();
 				allHeaders.split(/\r?\n/).forEach((l) => {
 					let m = /^\s*([^:]+): (.*)/.exec(l);
+
 					if (m) {
 						res.headers[m[1].toLowerCase()] = m[2];
 					}
@@ -144,6 +153,7 @@ export function httpRequestCoreAsync(options: HttpRequestOptions) {
 		};
 
 		let data = options.data;
+
 		let method = options.method || (data == null ? "GET" : "POST");
 
 		let buf: any;
@@ -181,6 +191,7 @@ function resolvePath(path: string) {
 
 export function stringToBuffer(str: string, encoding?: string) {
 	let contents: string;
+
 	if (encoding === "base64") {
 		try {
 			contents = atob(str);
@@ -216,8 +227,11 @@ export async function findFilesAsync(
 	if (maxDepth === 0) return [];
 
 	const files = await vscode.workspace.fs.readDirectory(root);
+
 	const result: vscode.Uri[] = [];
+
 	const recursivePromises: Promise<vscode.Uri[]>[] = [];
+
 	for (const file of files) {
 		const [fileName, type] = file;
 
@@ -239,6 +253,7 @@ export async function findFilesAsync(
 	}
 
 	const subdirs = await Promise.all(recursivePromises);
+
 	for (const dir of subdirs) {
 		result.push(...dir);
 	}

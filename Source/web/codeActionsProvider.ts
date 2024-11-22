@@ -8,16 +8,23 @@ export function codeActionsProvider() {
 		{
 			provideCodeActions(document, range, context, token) {
 				const jresNodes = getCurrentJresNodes();
+
 				if (!jresNodes) return undefined;
+
 				const start = range.start;
+
 				const line = document.lineAt(start.line);
+
 				const matchRegex =
 					/assets\.(image|tile|tilemap|animation|song)`([a-z0-9 _-]+)`/gi;
 
 				let match: RegExpExecArray | null;
+
 				let output = [];
+
 				while ((match = matchRegex.exec(line.text))) {
 					const assetType = match[1].toLowerCase() as AssetKind;
+
 					const givenAssetName = match[2];
 
 					if (

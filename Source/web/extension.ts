@@ -55,16 +55,20 @@ import {
 import { VFS } from "./vfs";
 
 let diagnosticsCollection: vscode.DiagnosticCollection;
+
 let applicationInsights: TelemetryReporter;
+
 let extensionContext: vscode.ExtensionContext;
 
 export function activate(context: vscode.ExtensionContext) {
 	extensionContext = context;
+
 	setHost(createVsCodeHost());
 
 	const addCmd = (id: string, fn: () => Promise<void>) => {
 		const cmd = vscode.commands.registerCommand(id, () => {
 			const mkcdTickPrefix = "makecode.";
+
 			if (id.startsWith(mkcdTickPrefix)) {
 				tickEvent(id.slice(mkcdTickPrefix.length));
 			}
@@ -204,10 +208,12 @@ async function chooseWorkspaceAsync(
 	silent = false,
 ): Promise<vscode.WorkspaceFolder | undefined> {
 	const folders = [];
+
 	let hasWorkspaceOpen = false;
 
 	if (vscode.workspace.workspaceFolders) {
 		hasWorkspaceOpen = !!vscode.workspace.workspaceFolders.length;
+
 		for (const folder of vscode.workspace.workspaceFolders) {
 			if (kind === "any") {
 				folders.push(folder);
@@ -271,6 +277,7 @@ async function buildCommand() {
 	console.log("Build command");
 
 	const workspace = await chooseWorkspaceAsync("project");
+
 	if (!workspace) {
 		return;
 	}
@@ -304,10 +311,12 @@ async function buildCommand() {
 			const showNotifcationConfig = vscode.workspace
 				.getConfiguration()
 				.get("makecode.showCompileNotification");
+
 			if (!showNotifcationConfig) return;
 
 			setTimeout(async () => {
 				const dontShowAgain = vscode.l10n.t("Don't show this again");
+
 				const selection = await vscode.window.showInformationMessage(
 					vscode.l10n.t(
 						"Compiled file written to {0}",
@@ -335,6 +344,7 @@ export async function installCommand() {
 	console.log("Install command");
 
 	const workspace = await chooseWorkspaceAsync("project");
+
 	if (!workspace) {
 		return;
 	}
@@ -360,6 +370,7 @@ async function cleanCommand() {
 	console.log("Clean command");
 
 	const workspace = await chooseWorkspaceAsync("project");
+
 	if (!workspace) {
 		return;
 	}
@@ -388,8 +399,10 @@ export async function importUrlCommand(
 	tickEvent("importUrl");
 
 	const match = url && /^(?:S?\d{4}[\d\-]+|_[a-zA-Z0-9]{10,})$/.exec(url);
+
 	let workspace =
 		useWorkspace || (await chooseWorkspaceAsync("empty", !!match));
+
 	if (!workspace) {
 		if (match) {
 			vscode.workspace.updateWorkspaceFolders(0, 0, {
@@ -428,6 +441,7 @@ export async function importUrlCommand(
 				await downloadSharedProjectAsync(workspace!, toOpen!);
 			} catch (e) {
 				showError(vscode.l10n.t("Unable to download project"));
+
 				return;
 			}
 
@@ -460,14 +474,17 @@ async function pickHardwareVariantAsync(workspace: vscode.WorkspaceFolder) {
 
 export async function simulateCommand(context: vscode.ExtensionContext) {
 	const workspace = await chooseWorkspaceAsync("project");
+
 	if (workspace) {
 		setActiveWorkspace(workspace);
 	} else {
 		return;
 	}
 	let clearBuildListener: (() => void) | undefined;
+
 	if (!BuildWatcher.watcher.isEnabled()) {
 		let runSimulator: () => Promise<void>;
+
 		let handleError: () => Promise<void>;
 		clearBuildListener = () => {
 			BuildWatcher.watcher.stop();
@@ -480,6 +497,7 @@ export async function simulateCommand(context: vscode.ExtensionContext) {
 		runSimulator = async () => {
 			if (!Simulator.currentSimulator) {
 				clearBuildListener?.();
+
 				return;
 			}
 
@@ -493,6 +511,7 @@ export async function simulateCommand(context: vscode.ExtensionContext) {
 		handleError = async () => {
 			if (!Simulator.currentSimulator) {
 				clearBuildListener?.();
+
 				return;
 			}
 			Simulator.currentSimulator?.setPanelTitle(
@@ -508,6 +527,7 @@ export async function simulateCommand(context: vscode.ExtensionContext) {
 	}
 
 	Simulator.createOrShow(context);
+
 	if (clearBuildListener) {
 		Simulator.currentSimulator!.addDisposable(
 			new vscode.Disposable(clearBuildListener),
@@ -537,6 +557,7 @@ async function deleteAssetCommand(node: JResTreeNode) {
 
 async function refreshAssetsCommand(justFireEvent: boolean) {
 	tickEvent("refreshAssets");
+
 	if (justFireEvent) {
 		fireChangeEvent();
 	} else {
@@ -556,6 +577,7 @@ async function createCommand() {
 	console.log("Create command");
 
 	const workspace = await chooseWorkspaceAsync("empty");
+
 	if (!workspace) {
 		return;
 	}
@@ -613,6 +635,7 @@ async function createCommand() {
 					await createEmptyProjectAsync(workspace, "arcade");
 				} catch (e) {
 					showError(vscode.l10n.t("Unable to create project"));
+
 					return;
 				}
 
@@ -660,6 +683,7 @@ async function openAssetEditor(
 
 async function shareCommandAsync() {
 	const workspace = await chooseWorkspaceAsync("project");
+
 	if (!workspace) {
 		return;
 	}
@@ -691,18 +715,24 @@ export interface ExtensionInfo {
 
 async function addDependencyCommandAsync() {
 	const workspace = await chooseWorkspaceAsync("project");
+
 	if (!workspace) {
 		return;
 	}
 	const qp = vscode.window.createQuickPick<ExtensionInfo>();
 	qp.busy = true;
+
 	let defaultPreferredExtensions: ExtensionInfo[] = [];
+
 	const getExtensionInfoAsync = async () => {
 		const pxtJson = await getPxtJson(workspace);
+
 		const deps = pxtJson?.dependencies ?? {};
+
 		const currentBuiltinDeps = Object.keys(deps).filter(
 			(dep) => deps[dep] === "*",
 		);
+
 		const currentGhDeps = Object.keys(deps)
 			.filter((dep) => deps[dep].startsWith("github:"))
 			.map((dep) =>
@@ -710,8 +740,11 @@ async function addDependencyCommandAsync() {
 			);
 
 		const targetConfig = await getTargetConfigAsync(workspace);
+
 		const approvedRepoLib = targetConfig?.packages?.approvedRepoLib ?? {};
+
 		const builtInRepo = targetConfig?.packages?.builtinExtensionsLib ?? {};
+
 		const preferredExts = Object.keys(builtInRepo)
 			.filter(
 				(builtin) =>
@@ -725,11 +758,14 @@ async function addDependencyCommandAsync() {
 						currentGhDeps.indexOf(repo) === -1,
 				),
 			);
+
 		defaultPreferredExtensions = preferredExts.map((ext) => ({
 			id: ext,
 			label: ext,
 		}));
+
 		const newQpItems = [...defaultPreferredExtensions];
+
 		if (!!qp.value) {
 			const userEnteredSuggestion = {
 				id: qp.value,
@@ -791,6 +827,7 @@ async function addDependencyCommandAsync() {
 						"Unable to add dependency. Are you connected to the Internet?",
 					),
 				);
+
 				return;
 			}
 		},
@@ -799,6 +836,7 @@ async function addDependencyCommandAsync() {
 
 async function removeDependencyCommandAsync() {
 	const workspace = await chooseWorkspaceAsync("project");
+
 	if (!workspace) {
 		return;
 	}
@@ -877,6 +915,7 @@ function showError(message: string) {
 export async function fileExistsAsync(path: vscode.Uri) {
 	try {
 		const stat = await vscode.workspace.fs.stat(path);
+
 		return true;
 	} catch {
 		return false;
@@ -907,6 +946,7 @@ export function reportBuildErrors(res: CompileResult) {
 			message = "";
 
 			let indent = 0;
+
 			while (diagnosticChain) {
 				if (indent) {
 					message += "\n";

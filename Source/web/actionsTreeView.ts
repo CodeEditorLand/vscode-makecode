@@ -97,6 +97,7 @@ export class ActionsTreeViewProvider
 		element?: ActionTreeNode | undefined,
 	): vscode.ProviderResult<ActionTreeNode[]> {
 		if (!element) return actions;
+
 		return [];
 	}
 }

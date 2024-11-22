@@ -12,6 +12,7 @@ import {
 
 let extensionContext: vscode.ExtensionContext;
 // const editorUrl = "http://localhost:3232/?controller=1";
+
 const editorUrl = "https://arcade.makecode.com/?controller=1&skillmap=1";
 
 interface Header {
@@ -53,6 +54,7 @@ export class MakeCodeEditor {
 				undefined /** keep current column **/,
 				true,
 			);
+
 			return;
 		}
 
@@ -144,6 +146,7 @@ export class MakeCodeEditor {
 		const fsWatcher = vscode.workspace.createFileSystemWatcher(
 			new vscode.RelativePattern(folder, "**"),
 		);
+
 		const watchHandler = (uri: vscode.Uri) => {
 			if (!this.running) {
 				return;
@@ -171,6 +174,7 @@ export class MakeCodeEditor {
 
 	stop() {
 		this.running = false;
+
 		if (this.watcherDisposable) {
 			this.watcherDisposable.dispose();
 			this.watcherDisposable = undefined;
@@ -181,15 +185,19 @@ export class MakeCodeEditor {
 		if (this.pendingMessages[message.id]) {
 			this.pendingMessages[message.id](message);
 			delete this.pendingMessages[message.id];
+
 			return;
 		}
 
 		switch (message.type) {
 			case "pxthost":
 				this.handleHostMessage(message);
+
 				break;
+
 			case "ready":
 				this.onReadyMessageReceivedAsync();
+
 				break;
 		}
 	}
@@ -199,6 +207,7 @@ export class MakeCodeEditor {
 			const project = await this.readProjectAsync(
 				this.folder || activeWorkspace(),
 			);
+
 			const testProject = await this.readTestProjectAsync(
 				this.folder || activeWorkspace(),
 			);
@@ -220,6 +229,7 @@ export class MakeCodeEditor {
 			this.panel.webview.postMessage(message);
 		} else if (message.action === "workspacesave") {
 			const project = message.project as Project;
+
 			if (project?.header.extensionUnderTest === this.extHeaderId) {
 				this.saveTestProjectAsync(
 					this.folder || activeWorkspace(),
@@ -257,6 +267,7 @@ export class MakeCodeEditor {
 		const testProject = await this.readTestProjectAsync(
 			this.folder || activeWorkspace(),
 		);
+
 		if (testProject) {
 			this.testHeaderId = testProject.header.id;
 			this.extHeaderId = testProject.header.extensionUnderTest;
@@ -265,9 +276,11 @@ export class MakeCodeEditor {
 		}
 
 		this.panel.webview.html = "";
+
 		const hash = this.testHeaderId
 			? "header:" + this.testHeaderId
 			: "testproject:" + this.extHeaderId;
+
 		const simulatorHTML = await getMakeCodeEditorHtmlAsync(
 			this.panel.webview,
 			hash,
@@ -287,7 +300,9 @@ export class MakeCodeEditor {
 		workspace: vscode.WorkspaceFolder,
 	): Promise<Project> {
 		const text = await createProjectBlobAsync(workspace);
+
 		const header = createHeader();
+
 		return {
 			text,
 			header,
@@ -298,6 +313,7 @@ export class MakeCodeEditor {
 		workspace: vscode.WorkspaceFolder,
 	): Promise<Project | undefined> {
 		const uri = vscode.Uri.joinPath(workspace.uri, ".pxt", "test_project");
+
 		if (await fileExistsAsync(uri)) {
 			return JSON.parse(await readTextFileAsync(uri));
 		}
@@ -331,6 +347,7 @@ async function getMakeCodeEditorHtmlAsync(
 		"resources",
 		"editorframe.html",
 	);
+
 	const contents = await readTextFileAsync(uri);
 
 	const pathURL = (s: string) =>
@@ -351,6 +368,7 @@ async function getMakeCodeEditorHtmlAsync(
 
 async function createProjectBlobAsync(workspace: vscode.WorkspaceFolder) {
 	const project: { [index: string]: string } = {};
+
 	const config = await getPxtJson(workspace);
 
 	const processFileAsync = async (file: string) => {

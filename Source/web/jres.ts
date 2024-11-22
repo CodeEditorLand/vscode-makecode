@@ -103,6 +103,7 @@ export async function deleteAssetAsync(node: JResTreeNode) {
 	}
 
 	const sourceText = await readTextFileAsync(node.sourceFile);
+
 	const sourceJRes = JSON.parse(sourceText);
 
 	if (sourceJRes[node.id]) {
@@ -111,9 +112,11 @@ export async function deleteAssetAsync(node: JResTreeNode) {
 		const parts = node.id.split(".");
 
 		const ns = parts.slice(0, parts.length - 1).join(".");
+
 		const id = parts[parts.length - 1];
 
 		const entry = sourceJRes[id];
+
 		if (
 			entry?.namespace === ns ||
 			entry?.namespace === ns + "." ||
@@ -137,7 +140,9 @@ export function getCurrentJresNodes() {
 
 async function readProjectJResAsync() {
 	const nodes: JResTreeNode[] = [];
+
 	const ws = activeWorkspace()?.uri;
+
 	if (!ws) return [];
 
 	const files = await findFilesAsync("jres", activeWorkspace().uri, false);
@@ -150,9 +155,11 @@ async function readProjectJResAsync() {
 			continue;
 		}
 		const contents = await readTextFileAsync(file);
+
 		const jres = JSON.parse(contents);
 
 		const defaultMimeType: string | undefined = jres["*"]?.mimeType;
+
 		const globalNamespace: string | undefined = jres["*"]?.namespace;
 
 		for (const key of Object.keys(jres)) {
@@ -161,7 +168,9 @@ async function readProjectJResAsync() {
 			}
 
 			const value = jres[key];
+
 			const ns = jres[key].namespace || globalNamespace;
+
 			const id = key.startsWith(ns) ? key : namespaceJoin(ns, key);
 
 			if (typeof value === "string") {
@@ -217,10 +226,13 @@ function mimeTypeToKind(mime: string, isTile?: boolean) {
 	switch (mime) {
 		case "image/x-mkcd-f4":
 			return isTile ? "tile" : "image";
+
 		case "application/mkcd-tilemap":
 			return "tilemap";
+
 		case "application/mkcd-animation":
 			return "animation";
+
 		case "application/mkcd-song":
 			return "song";
 	}
@@ -230,6 +242,7 @@ function mimeTypeToKind(mime: string, isTile?: boolean) {
 
 function namespaceJoin(...parts: string[]) {
 	let res = parts.shift();
+
 	while (parts.length) {
 		res = namespaceJoinCore(res!, parts.shift()!);
 	}

@@ -16,6 +16,7 @@ export async function shareProjectAsync(workspace: vscode.WorkspaceFolder) {
 
 	if (res.statusCode === 200) {
 		const resJSON = JSON.parse(res.text!);
+
 		return apiRoot + "/" + resJSON.shortid;
 	}
 
@@ -26,6 +27,7 @@ async function createShareLinkRequestAsync(workspace: vscode.WorkspaceFolder) {
 	const config = await readTextFileAsync(
 		vscode.Uri.joinPath(workspace.uri, "pxt.json"),
 	);
+
 	const parsed = JSON.parse(config) as pxt.PackageConfig;
 
 	const files: { [index: string]: string } = {
