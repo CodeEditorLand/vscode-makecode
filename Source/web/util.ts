@@ -104,7 +104,6 @@ export async function setPxtJson(
 
 function getRandomBuf(buf: Uint8Array) {
 	if (crypto) crypto.getRandomValues(buf);
-
 	else {
 		for (let i = 0; i < buf.length; ++i)
 			buf[i] = Math.floor(Math.random() * 255);

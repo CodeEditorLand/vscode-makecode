@@ -140,7 +140,6 @@ function parseGalleryMardown(md: string) {
 				const cards = parseCodeCards(cardsSource);
 
 				if (cards?.length) galleries.push({ name, cards });
-
 				else console.log(`invalid gallery format`);
 			}
 			cardsSource = "";
@@ -168,7 +167,6 @@ function parseCodeCards(md: string): pxt.CodeCard[] | undefined {
 			let cc: any = {};
 			cmd.replace(/^\s*(?:-|\*)\s+(\w+)\s*:\s*(.*)$/gm, (m, n, v) => {
 				if (n == "flags") cc[n] = v.split(",");
-
 				else if (n === "otherAction") {
 					const parts: string[] = v
 						.split(",")
