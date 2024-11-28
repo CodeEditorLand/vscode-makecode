@@ -4,6 +4,7 @@ import { activeWorkspace, findFilesAsync } from "./host";
 import { readTextFileAsync } from "./util";
 
 export type AssetKind = "image" | "tile" | "tilemap" | "animation" | "song";
+
 export interface JResTreeNode {
 	kind: AssetKind;
 	id?: string;

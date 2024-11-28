@@ -36,6 +36,7 @@ export function createVsCodeHost(): Host {
 }
 
 export function readFileAsync(path: string, encoding: "utf8"): Promise<string>;
+
 export async function readFileAsync(path: string, encoding?: "utf8") {
 	const contents = await vscode.workspace.fs.readFile(resolvePath(path));
 
