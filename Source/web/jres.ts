@@ -7,9 +7,13 @@ export type AssetKind = "image" | "tile" | "tilemap" | "animation" | "song";
 
 export interface JResTreeNode {
 	kind: AssetKind;
+
 	id?: string;
+
 	name?: string;
+
 	sourceFile?: vscode.Uri;
+
 	uri?: vscode.Uri;
 }
 
@@ -17,17 +21,20 @@ let model: JResTreeModel;
 
 class JResTreeModel {
 	nodes: JResTreeNode[] = [];
+
 	eventEmitter: vscode.EventEmitter<JResTreeNode[]>;
 
 	providers: JResTreeProvider[] = [];
 
 	constructor() {
 		this.eventEmitter = new vscode.EventEmitter<JResTreeNode[]>();
+
 		this.refreshJresAsync();
 	}
 
 	async refreshJresAsync() {
 		this.nodes = await readProjectJResAsync();
+
 		vscode.commands.executeCommand("makecode.refreshAssets", true);
 	}
 }
@@ -36,6 +43,7 @@ export class JResTreeProvider implements vscode.TreeDataProvider<JResTreeNode> {
 	_onDidChangeTreeData: vscode.EventEmitter<
 		JResTreeNode[] | undefined | void
 	>;
+
 	onDidChangeTreeData: vscode.Event<JResTreeNode[] | undefined | void>;
 
 	constructor(
@@ -44,8 +52,11 @@ export class JResTreeProvider implements vscode.TreeDataProvider<JResTreeNode> {
 		if (!model) {
 			model = new JResTreeModel();
 		}
+
 		this._onDidChangeTreeData = new vscode.EventEmitter();
+
 		this.onDidChangeTreeData = this._onDidChangeTreeData.event;
+
 		model.providers.push(this);
 	}
 
@@ -74,6 +85,7 @@ export class JResTreeProvider implements vscode.TreeDataProvider<JResTreeNode> {
 		if (!element) {
 			return model.nodes.filter((node) => node.kind === this.kind);
 		}
+
 		return [];
 	}
 
@@ -86,6 +98,7 @@ export async function syncJResAsync() {
 	if (!model) {
 		model = new JResTreeModel();
 	}
+
 	await model.refreshJresAsync();
 }
 
@@ -93,6 +106,7 @@ export function fireChangeEvent() {
 	if (!model) {
 		model = new JResTreeModel();
 	}
+
 	for (const provider of model.providers) {
 		provider._onDidChangeTreeData.fire();
 	}
@@ -132,6 +146,7 @@ export async function deleteAssetAsync(node: JResTreeNode) {
 		node.sourceFile,
 		new TextEncoder().encode(JSON.stringify(sourceJRes, null, 4)),
 	);
+
 	await syncJResAsync();
 }
 
@@ -155,6 +170,7 @@ async function readProjectJResAsync() {
 		) {
 			continue;
 		}
+
 		const contents = await readTextFileAsync(file);
 
 		const jres = JSON.parse(contents);
@@ -247,6 +263,7 @@ function namespaceJoin(...parts: string[]) {
 	while (parts.length) {
 		res = namespaceJoinCore(res!, parts.shift()!);
 	}
+
 	return res;
 }
 
@@ -254,9 +271,11 @@ function namespaceJoinCore(a: string, b: string) {
 	if (a.endsWith(".")) {
 		a = a.slice(0, a.length - 1);
 	}
+
 	if (b.startsWith(".")) {
 		b = b.slice(1);
 	}
+
 	return a + "." + b;
 }
 

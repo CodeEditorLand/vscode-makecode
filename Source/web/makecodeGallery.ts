@@ -11,7 +11,9 @@ const disallowedHardwareVariants = ["Arcade table", "Cardboard Panel"];
 
 export interface HardwareVariant {
 	id: string;
+
 	label: string;
+
 	detail: string;
 }
 
@@ -98,6 +100,7 @@ async function getSupportedTargetsAsync(workspace: vscode.WorkspaceFolder) {
 			return parsed.supportedTargets;
 		}
 	}
+
 	return ["arcade"];
 }
 
@@ -127,6 +130,7 @@ function parseGalleryMardown(md: string) {
 	let name: string | undefined = undefined;
 
 	let cardsSource: string = "";
+
 	md.split(/\r?\n/).forEach((line) => {
 		// new category
 		if (/^## /.test(line)) {
@@ -140,9 +144,12 @@ function parseGalleryMardown(md: string) {
 				const cards = parseCodeCards(cardsSource);
 
 				if (cards?.length) galleries.push({ name, cards });
+
 				else console.log(`invalid gallery format`);
 			}
+
 			cardsSource = "";
+
 			name = undefined;
 		} else if (incard) cardsSource += line + "\n";
 	});
@@ -165,14 +172,17 @@ function parseCodeCards(md: string): pxt.CodeCard[] | undefined {
 		.filter((cmd) => !!cmd)
 		.map((cmd) => {
 			let cc: any = {};
+
 			cmd.replace(/^\s*(?:-|\*)\s+(\w+)\s*:\s*(.*)$/gm, (m, n, v) => {
 				if (n == "flags") cc[n] = v.split(",");
+
 				else if (n === "otherAction") {
 					const parts: string[] = v
 						.split(",")
 						.map((p: string) => p?.trim());
 
 					const oas = cc["otherActions"] || (cc["otherActions"] = []);
+
 					oas.push({
 						url: parts[0],
 						editor: parts[1],

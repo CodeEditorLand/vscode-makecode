@@ -19,6 +19,7 @@ export async function maybeShowConfigNotificationAsync() {
 		) {
 			continue;
 		}
+
 		if (
 			!(await fileExistsAsync(
 				vscode.Uri.joinPath(folder.uri, "pxt.json"),
@@ -26,6 +27,7 @@ export async function maybeShowConfigNotificationAsync() {
 		) {
 			continue;
 		}
+
 		foldersToFix.push(folder);
 	}
 
@@ -76,6 +78,7 @@ export async function maybeShowDependenciesNotificationAsync() {
 		) {
 			continue;
 		}
+
 		if (
 			await fileExistsAsync(
 				vscode.Uri.joinPath(folder.uri, "pxt_modules"),
@@ -139,6 +142,7 @@ export async function maybeShowDependenciesNotificationAsync() {
 					} else if (e instanceof Error) {
 						errorMessage = e.message;
 					}
+
 					vscode.window.showErrorMessage(
 						vscode.l10n.t(
 							"Error while installing dependencies for {0}: {1}",

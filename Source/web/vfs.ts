@@ -5,6 +5,7 @@ import { importUrlCommand } from "./extension";
 
 export class VFS implements vscode.FileSystemProvider {
 	private initializedDirs: { [index: string]: boolean } = {};
+
 	private initializePromises: { [index: string]: Promise<void> | undefined } =
 		{};
 
@@ -30,6 +31,7 @@ export class VFS implements vscode.FileSystemProvider {
 		options: { create: boolean; overwrite: boolean; readonly?: true },
 	) {
 		await vscode.workspace.fs.writeFile(await this.remapURI(uri), content);
+
 		this._fireSoon({ type: vscode.FileChangeType.Changed, uri });
 	}
 
@@ -45,6 +47,7 @@ export class VFS implements vscode.FileSystemProvider {
 			await this.remapURI(newUri),
 			options,
 		);
+
 		this._fireSoon(
 			{ type: vscode.FileChangeType.Deleted, uri: oldUri },
 			{ type: vscode.FileChangeType.Created, uri: newUri },
@@ -55,6 +58,7 @@ export class VFS implements vscode.FileSystemProvider {
 		await vscode.workspace.fs.delete(await this.remapURI(uri), options);
 
 		const dirname = uri.with({ path: path.posix.dirname(uri.path) });
+
 		this._fireSoon(
 			{ type: vscode.FileChangeType.Changed, uri: dirname },
 			{ uri, type: vscode.FileChangeType.Deleted },
@@ -83,7 +87,9 @@ export class VFS implements vscode.FileSystemProvider {
 	}
 
 	private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+
 	private _bufferedEvents: vscode.FileChangeEvent[] = [];
+
 	private _fireSoonHandle?: any;
 
 	readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> =
@@ -103,6 +109,7 @@ export class VFS implements vscode.FileSystemProvider {
 
 		this._fireSoonHandle = setTimeout(() => {
 			this._emitter.fire(this._bufferedEvents);
+
 			this._bufferedEvents.length = 0;
 		}, 5);
 	}
@@ -122,6 +129,7 @@ export class VFS implements vscode.FileSystemProvider {
 							parts[0],
 						);
 					}
+
 					await this.initializePromises[parts[0]];
 				}
 			} else if (
@@ -134,6 +142,7 @@ export class VFS implements vscode.FileSystemProvider {
 						this.initializePromises[parts[0]] =
 							this.initializeWorkspace(parts[0]);
 					}
+
 					await this.initializePromises[parts[0]];
 				}
 			}
@@ -153,6 +162,7 @@ export class VFS implements vscode.FileSystemProvider {
 		if (!(await this.existsAsync(projectDir))) {
 			await vscode.workspace.fs.createDirectory(projectDir);
 		}
+
 		if (!(await this.existsAsync(pxtJSON))) {
 			await importUrlCommand(shareId, {
 				name: shareId,
@@ -160,6 +170,7 @@ export class VFS implements vscode.FileSystemProvider {
 				index: 0,
 			});
 		}
+
 		this.initializedDirs[shareId] = true;
 	}
 
@@ -174,6 +185,7 @@ export class VFS implements vscode.FileSystemProvider {
 				/^(S?\d{4}[\d\-]+|_[a-zA-Z0-9]{10,})\.code-workspace$/.exec(
 					name,
 				)![1];
+
 			await vscode.workspace.fs.writeFile(
 				workspacePath,
 				new TextEncoder().encode(
@@ -181,6 +193,7 @@ export class VFS implements vscode.FileSystemProvider {
 				),
 			);
 		}
+
 		this.initializedDirs[name] = true;
 	}
 }

@@ -43,6 +43,7 @@ export async function readFileAsync(path: string, encoding?: "utf8") {
 	if (encoding) {
 		return new TextDecoder().decode(contents);
 	}
+
 	return contents;
 }
 
@@ -94,6 +95,7 @@ function getFolderName() {
 
 function rmFolderPrefix(p: string) {
 	const cwd = getFolderName();
+
 	p = p.replace(/^[\/]+/, "");
 
 	if (p.startsWith(cwd)) return p.slice(cwd.length);
@@ -110,6 +112,7 @@ async function listFilesAsync(directory: string, filename: string) {
 		if (uri.fsPath.startsWith(root.fsPath)) {
 			return uri.fsPath.replace(root.fsPath, "").replace(/\\/g, "/");
 		}
+
 		return uri.fsPath;
 	});
 }
@@ -123,6 +126,7 @@ export function httpRequestCoreAsync(options: HttpRequestOptions) {
 		let headers = options.headers || {};
 
 		client = new XMLHttpRequest();
+
 		client.onreadystatechange = () => {
 			if (resolved) {
 				return;
@@ -141,7 +145,9 @@ export function httpRequestCoreAsync(options: HttpRequestOptions) {
 				if (typeof res.buffer === "string") {
 					res.buffer = new TextEncoder().encode(res.buffer);
 				}
+
 				const allHeaders = client.getAllResponseHeaders();
+
 				allHeaders.split(/\r?\n/).forEach((l) => {
 					let m = /^\s*([^:]+): (.*)/.exec(l);
 
@@ -149,6 +155,7 @@ export function httpRequestCoreAsync(options: HttpRequestOptions) {
 						res.headers[m[1].toLowerCase()] = m[2];
 					}
 				});
+
 				resolve(res);
 			}
 		};
@@ -165,6 +172,7 @@ export function httpRequestCoreAsync(options: HttpRequestOptions) {
 			buf = data;
 		} else if (typeof data === "object") {
 			buf = JSON.stringify(data);
+
 			headers["content-type"] = "application/json; charset=utf8";
 		} else if (typeof data === "string") {
 			buf = data;
@@ -216,6 +224,7 @@ export function activeWorkspace() {
 	if (!_activeWorkspace) {
 		_activeWorkspace = vscode.workspace.workspaceFolders![0];
 	}
+
 	return _activeWorkspace;
 }
 

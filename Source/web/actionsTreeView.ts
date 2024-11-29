@@ -2,7 +2,9 @@ import * as vscode from "vscode";
 
 interface ActionTreeNode {
 	label: string;
+
 	icon: vscode.ThemeIcon;
+
 	command: vscode.Command;
 }
 

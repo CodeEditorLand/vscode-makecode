@@ -16,19 +16,25 @@ const assetUrl = "https://arcade.makecode.com/--asseteditor";
 
 interface EditingState {
 	type: "edit";
+
 	assetType: string;
+
 	assetId: string;
 }
 
 interface DuplicatingState {
 	type: "duplicate";
+
 	assetType: string;
+
 	assetId: string;
 }
 
 interface CreatingState {
 	type: "create";
+
 	assetType: string;
+
 	displayName?: string;
 }
 
@@ -36,8 +42,11 @@ type AssetEditorState = EditingState | DuplicatingState | CreatingState;
 
 export class AssetEditor {
 	public static readonly viewType = "mkcdasset";
+
 	public static currentEditor: AssetEditor | undefined;
+
 	public simStateTimer: any;
+
 	public throttledSave: (files: { [index: string]: string }) => void =
 		throttle(saveFilesAsync, 300);
 
@@ -45,6 +54,7 @@ export class AssetEditor {
 		let column = vscode.window.activeTextEditor
 			? vscode.window.activeTextEditor.viewColumn
 			: vscode.ViewColumn.One;
+
 		column = column! < 9 ? column! + 1 : column;
 
 		if (AssetEditor.currentEditor) {
@@ -75,6 +85,7 @@ export class AssetEditor {
 
 	public static register(context: vscode.ExtensionContext) {
 		extensionContext = context;
+
 		vscode.window.registerWebviewPanelSerializer(
 			"mkcdasset",
 			new AssetEditorSerializer(),
@@ -86,9 +97,13 @@ export class AssetEditor {
 	}
 
 	protected panel: vscode.WebviewPanel;
+
 	protected editing: AssetEditorState | undefined;
+
 	protected disposables: vscode.Disposable[];
+
 	protected pendingMessages: { [index: string]: (res: any) => void } = {};
+
 	protected nextId = 0;
 
 	constructor(panel: vscode.WebviewPanel) {
@@ -115,6 +130,7 @@ export class AssetEditor {
 		const assetType = parts[1];
 
 		const assetId = parts.slice(2).join(".");
+
 		await this.openAssetAsync(assetType, assetId);
 	}
 
@@ -151,6 +167,7 @@ export class AssetEditor {
 	handleSimulatorMessage(message: any) {
 		if (this.pendingMessages[message.id]) {
 			this.pendingMessages[message.id](message);
+
 			delete this.pendingMessages[message.id];
 
 			return;
@@ -175,6 +192,7 @@ export class AssetEditor {
 				const saved = await this.sendMessageAsync({
 					type: "save",
 				});
+
 				this.throttledSave(saved.files);
 
 				break;
@@ -183,10 +201,12 @@ export class AssetEditor {
 
 	sendMessageAsync(message: any) {
 		message._fromVscode = true;
+
 		message.id = this.nextId++;
 
 		return new Promise<any>((resolve) => {
 			this.pendingMessages[message.id] = resolve;
+
 			this.panel.webview.postMessage(message);
 		});
 	}
@@ -199,6 +219,7 @@ export class AssetEditor {
 		this.panel.webview.html = "";
 
 		const simulatorHTML = await getAssetEditorHtmlAsync(this.panel.webview);
+
 		this.panel.webview.html = simulatorHTML;
 	}
 
@@ -250,6 +271,7 @@ export class AssetEditorSerializer implements vscode.WebviewPanelSerializer {
 		state: any,
 	) {
 		AssetEditor.revive(webviewPanel);
+
 		await AssetEditor.currentEditor?.openAssetAsync(
 			state.editing!.assetType,
 			state.editing!.assetId,
@@ -289,6 +311,7 @@ async function readProjectJResAsync() {
 
 	for (const file of files) {
 		const contents = await readTextFileAsync(file);
+
 		fileSystem[vscode.workspace.asRelativePath(file)] = contents;
 
 		const pathParts = file.path.split(".");
@@ -299,6 +322,7 @@ async function readProjectJResAsync() {
 
 		try {
 			const tsContents = await readTextFileAsync(tsFile);
+
 			fileSystem[vscode.workspace.asRelativePath(tsFile)] = tsContents;
 		} catch (e) {
 			// file does not exist
@@ -310,6 +334,7 @@ async function readProjectJResAsync() {
 
 		try {
 			const gtsContents = await readTextFileAsync(gtsFile);
+
 			fileSystem[vscode.workspace.asRelativePath(gtsFile)] = gtsContents;
 		} catch (e) {
 			// file does not exist
@@ -341,11 +366,13 @@ async function saveFilesAsync(files: { [index: string]: string }) {
 
 		if (configFiles.indexOf(file) === -1) {
 			insertGeneratedFile(configFiles, file);
+
 			didChangeConfig = true;
 		}
 	}
 
 	await writeFileAsync("./pxt.json", JSON.stringify(parsed, null, 4), "utf8");
+
 	await syncJResAsync();
 
 	if (didChangeConfig) {

@@ -5,9 +5,13 @@ import { setActiveWorkspace } from "./host";
 
 interface Operation<U> {
 	folder: vscode.WorkspaceFolder;
+
 	action: () => Promise<U>;
+
 	resolve: (result: U) => void;
+
 	reject: (e?: any) => void;
+
 	cancellationToken?: vscode.CancellationToken;
 }
 
@@ -151,14 +155,17 @@ function enqueueOperationAsync<U>(
 			reject,
 			cancellationToken,
 		};
+
 		operationQueue.push(op);
 
 		if (cancellationToken) {
 			cancellationToken.onCancellationRequested((e) => {
 				reject(e);
+
 				operationQueue = operationQueue.filter((o) => o !== op);
 			});
 		}
+
 		pokeQueueAsync();
 	});
 }
@@ -181,6 +188,7 @@ async function pokeQueueAsync() {
 
 		try {
 			const res = await op.action();
+
 			op.resolve(res);
 		} catch (e) {
 			op.reject(e);

@@ -14,6 +14,7 @@ export function throttle(
 
 	return function (this: any) {
 		const context = this;
+
 		lastArgs = arguments;
 
 		const later = () => {
@@ -21,6 +22,7 @@ export function throttle(
 
 			if (!immediate) {
 				func.apply(context, lastArgs as any);
+
 				lastArgs = undefined;
 			}
 		};
@@ -30,8 +32,10 @@ export function throttle(
 		if (!timeout) {
 			timeout = setTimeout(later, wait);
 		}
+
 		if (callNow) {
 			func.apply(context, lastArgs as any);
+
 			lastArgs = undefined;
 		}
 	};
@@ -60,7 +64,9 @@ export function debounce(
 		};
 
 		const callNow = immediate && !timeout;
+
 		clearTimeout(timeout);
+
 		timeout = setTimeout(later, wait);
 
 		if (callNow) func.apply(context, args as any);
@@ -99,11 +105,13 @@ export async function setPxtJson(
 	pxtJson: pxt.PackageConfig,
 ) {
 	const configPath = vscode.Uri.joinPath(workspace.uri, "pxt.json");
+
 	await writeTextFileAsync(configPath, JSON.stringify(pxtJson, null, 4));
 }
 
 function getRandomBuf(buf: Uint8Array) {
 	if (crypto) crypto.getRandomValues(buf);
+
 	else {
 		for (let i = 0; i < buf.length; ++i)
 			buf[i] = Math.floor(Math.random() * 255);
@@ -122,6 +130,7 @@ export function guidGen() {
 	function f() {
 		return (randomUint32() | 0x10000).toString(16).slice(-4);
 	}
+
 	return (
 		f() +
 		f() +
@@ -144,9 +153,12 @@ export function showQuickPickAsync<U extends vscode.QuickPickItem>(
 	return new Promise<U>((resolve, reject) => {
 		qp.onDidAccept(() => {
 			const selected = qp.selectedItems[0];
+
 			qp.dispose();
+
 			resolve(selected);
 		});
+
 		qp.show();
 	});
 }

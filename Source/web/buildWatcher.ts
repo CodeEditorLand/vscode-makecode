@@ -13,15 +13,21 @@ export class BuildWatcher {
 	}
 
 	protected buildOpts: BuildOptions;
+
 	protected running = false;
+
 	protected building = false;
+
 	protected buildPending = false;
+
 	protected pendingCancelToken: vscode.CancellationTokenSource | undefined;
 
 	protected errorListeners: ((error: any) => void)[] = [];
+
 	protected buildCompletedListeners: (() => void)[] = [];
 
 	protected watcherDisposable: vscode.Disposable | undefined;
+
 	protected folder: vscode.WorkspaceFolder | undefined;
 
 	private constructor(protected context: vscode.ExtensionContext) {
@@ -35,9 +41,11 @@ export class BuildWatcher {
 		if (this.running && this.folder === folder) {
 			return;
 		}
+
 		this.stop();
 
 		this.folder = folder;
+
 		this.running = true;
 
 		const debounceTimer = vscode.workspace
@@ -71,10 +79,15 @@ export class BuildWatcher {
 		};
 
 		fsWatcher.onDidChange(watchHandler);
+
 		fsWatcher.onDidCreate(watchHandler);
+
 		fsWatcher.onDidDelete(watchHandler);
+
 		this.watcherDisposable = fsWatcher;
+
 		this.context.subscriptions.push(this.watcherDisposable);
+
 		this.buildAsync(true);
 	}
 
@@ -87,10 +100,13 @@ export class BuildWatcher {
 
 		if (this.watcherDisposable) {
 			this.watcherDisposable.dispose();
+
 			this.watcherDisposable = undefined;
 		}
+
 		if (this.pendingCancelToken) {
 			this.pendingCancelToken.cancel();
+
 			this.pendingCancelToken.dispose();
 		}
 	}
@@ -108,7 +124,9 @@ export class BuildWatcher {
 	}
 
 	addEventListener(event: "error", handler: (error: any) => void): void;
+
 	addEventListener(event: "build-completed", handler: () => void): void;
+
 	addEventListener(
 		event: "error" | "build-completed",
 		handler: Function,
@@ -121,7 +139,9 @@ export class BuildWatcher {
 	}
 
 	removeEventListener(event: "error", handler: (error: any) => void): void;
+
 	removeEventListener(event: "build-completed", handler: () => void): void;
+
 	removeEventListener(
 		event: "error" | "build-completed",
 		handler: Function,
@@ -184,6 +204,7 @@ export class BuildWatcher {
 							this.buildOpts,
 							token?.token,
 						);
+
 						token?.dispose();
 
 						if (result.diagnostics.length) {
@@ -192,6 +213,7 @@ export class BuildWatcher {
 							for (const errorHandler of this.errorListeners) {
 								errorHandler(result.diagnostics);
 							}
+
 							return;
 						}
 
@@ -217,6 +239,7 @@ export class BuildWatcher {
 	protected newCancelToken() {
 		if (this.pendingCancelToken) {
 			this.pendingCancelToken.cancel();
+
 			this.pendingCancelToken.dispose();
 		}
 
@@ -231,6 +254,7 @@ export class BuildWatcher {
 			token,
 			cancel: () => {
 				cancelEvent.fire();
+
 				token.isCancellationRequested = true;
 			},
 			dispose: () => {
@@ -243,6 +267,7 @@ export class BuildWatcher {
 		};
 
 		this.pendingCancelToken = tokenSource;
+
 		this.context.subscriptions.push(cancelEvent);
 	}
 }

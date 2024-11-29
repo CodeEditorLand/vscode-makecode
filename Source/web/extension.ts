@@ -72,20 +72,27 @@ export function activate(context: vscode.ExtensionContext) {
 			if (id.startsWith(mkcdTickPrefix)) {
 				tickEvent(id.slice(mkcdTickPrefix.length));
 			}
+
 			return fn().catch((err) => {
 				console.error("MakeCode Ext Exception", err);
 			});
 		});
+
 		context.subscriptions.push(cmd);
 	};
+
 	context.subscriptions.push(codeActionsProvider());
 
 	Simulator.register(context);
+
 	AssetEditor.register(context);
+
 	BuildWatcher.register(context);
+
 	MakeCodeEditor.register(context);
 
 	const vfs = new VFS(context);
+
 	context.subscriptions.push(
 		vscode.workspace.registerFileSystemProvider("mkcdfs", vfs, {
 			isCaseSensitive: true,
@@ -93,19 +100,31 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	addCmd("makecode.build", buildCommand);
+
 	addCmd("makecode.simulate", () => simulateCommand(context));
+
 	addCmd("makecode.create", createCommand);
+
 	addCmd("makecode.install", installCommand);
+
 	addCmd("makecode.clean", cleanCommand);
+
 	addCmd("makecode.shareProject", shareCommandAsync);
+
 	addCmd("makecode.addDependency", addDependencyCommandAsync);
+
 	addCmd("makecode.removeDependency", removeDependencyCommandAsync);
 
 	addCmd("makecode.createImage", () => createAssetCommand("image"));
+
 	addCmd("makecode.createTile", () => createAssetCommand("tile"));
+
 	addCmd("makecode.createTilemap", () => createAssetCommand("tilemap"));
+
 	addCmd("makecode.createAnimation", () => createAssetCommand("animation"));
+
 	addCmd("makecode.createSong", () => createAssetCommand("song"));
+
 	addCmd("makecode.testBlocks", testBlocksCommandAsync);
 
 	context.subscriptions.push(
@@ -114,65 +133,77 @@ export function activate(context: vscode.ExtensionContext) {
 			createAssetCommand,
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			"makecode.duplicateAsset",
 			duplicateAssetCommand,
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			"makecode.deleteAsset",
 			deleteAssetCommand,
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			"makecode.refreshAssets",
 			refreshAssetsCommand,
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand("makecode.importUrl", importUrlCommand),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand("makecode.openHelpDocs", openHelpDocs),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand("makecode.openAsset", (uri) => {
 			openAssetEditor(context, uri);
 		}),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerTreeDataProvider(
 			"makecodeActions",
 			new ActionsTreeViewProvider(),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerTreeDataProvider(
 			"imageExplorer",
 			new JResTreeProvider("image"),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerTreeDataProvider(
 			"animationExplorer",
 			new JResTreeProvider("animation"),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerTreeDataProvider(
 			"tileExplorer",
 			new JResTreeProvider("tile"),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerTreeDataProvider(
 			"tilemapExplorer",
 			new JResTreeProvider("tilemap"),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerTreeDataProvider(
 			"songExplorer",
@@ -183,16 +214,20 @@ export function activate(context: vscode.ExtensionContext) {
 	// This key is not sensitive, and is publicly available in client side apps logging to AI
 	const appInsightsKey =
 		"0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255";
+
 	applicationInsights = new TelemetryReporter(appInsightsKey);
+
 	context.subscriptions.push(applicationInsights);
 
 	BuildWatcher.watcher.addEventListener("error", showError);
 
 	diagnosticsCollection =
 		vscode.languages.createDiagnosticCollection("MakeCode");
+
 	context.subscriptions.push(diagnosticsCollection);
 
 	maybeShowConfigNotificationAsync();
+
 	maybeShowDependenciesNotificationAsync();
 
 	// Set a context key to indicate that we have activated, so context menu commands can show
@@ -254,6 +289,7 @@ async function chooseWorkspaceAsync(
 				);
 			}
 		}
+
 		return;
 	} else if (folders.length === 1) {
 		return folders[0];
@@ -359,6 +395,7 @@ export async function installCommand() {
 			await installDependenciesAsync(workspace);
 
 			await vscode.commands.executeCommand("makecode.refreshAssets");
+
 			await vscode.commands.executeCommand(
 				"workbench.files.action.refreshFilesExplorer",
 			);
@@ -383,6 +420,7 @@ async function cleanCommand() {
 		},
 		async (progress) => {
 			await cleanProjectFolderAsync(workspace);
+
 			await vscode.commands.executeCommand(
 				"workbench.files.action.refreshFilesExplorer",
 			);
@@ -396,6 +434,7 @@ export async function importUrlCommand(
 	isTemplate?: boolean,
 ) {
 	console.log("Import URL command");
+
 	tickEvent("importUrl");
 
 	const match = url && /^(?:S?\d{4}[\d\-]+|_[a-zA-Z0-9]{10,})$/.exec(url);
@@ -409,10 +448,12 @@ export async function importUrlCommand(
 				uri: vscode.Uri.parse("mkcdfs:/" + url),
 				name: vscode.l10n.t("Imported Project ({0})", url),
 			});
+
 			await vscode.commands.executeCommand(
 				"workbench.files.action.refreshFilesExplorer",
 			);
 		}
+
 		return;
 	}
 
@@ -446,6 +487,7 @@ export async function importUrlCommand(
 			}
 
 			await vscode.commands.executeCommand("makecode.refreshAssets");
+
 			await vscode.commands.executeCommand(
 				"workbench.files.action.refreshFilesExplorer",
 			);
@@ -459,15 +501,18 @@ async function pickHardwareVariantAsync(workspace: vscode.WorkspaceFolder) {
 	if (variants.length <= 1) return;
 
 	const qp = vscode.window.createQuickPick<HardwareQuickpick>();
+
 	qp.items = variants;
 
 	return new Promise<string>((resolve, reject) => {
 		qp.onDidAccept(() => {
 			const selected = qp.selectedItems[0];
+
 			qp.dispose();
 
 			resolve(selected?.id);
 		});
+
 		qp.show();
 	});
 }
@@ -480,20 +525,25 @@ export async function simulateCommand(context: vscode.ExtensionContext) {
 	} else {
 		return;
 	}
+
 	let clearBuildListener: (() => void) | undefined;
 
 	if (!BuildWatcher.watcher.isEnabled()) {
 		let runSimulator: () => Promise<void>;
 
 		let handleError: () => Promise<void>;
+
 		clearBuildListener = () => {
 			BuildWatcher.watcher.stop();
+
 			BuildWatcher.watcher.removeEventListener(
 				"build-completed",
 				runSimulator,
 			);
+
 			BuildWatcher.watcher.removeEventListener("error", handleError);
 		};
+
 		runSimulator = async () => {
 			if (!Simulator.currentSimulator) {
 				clearBuildListener?.();
@@ -504,23 +554,30 @@ export async function simulateCommand(context: vscode.ExtensionContext) {
 			Simulator.currentSimulator.setPanelTitle(
 				vscode.l10n.t("Arcade Simulator"),
 			);
+
 			Simulator.currentSimulator.simulateAsync(
 				await readFileAsync("built/binary.js", "utf8"),
 			);
 		};
+
 		handleError = async () => {
 			if (!Simulator.currentSimulator) {
 				clearBuildListener?.();
 
 				return;
 			}
+
 			Simulator.currentSimulator?.setPanelTitle(
 				vscode.l10n.t("{0} Arcade Simulator", "⚠️"),
 			);
+
 			Simulator.currentSimulator?.stopSimulator();
 		};
+
 		BuildWatcher.watcher.addEventListener("build-completed", runSimulator);
+
 		BuildWatcher.watcher.addEventListener("error", handleError);
+
 		BuildWatcher.watcher.startWatching(workspace);
 	} else {
 		await BuildWatcher.watcher.buildNowAsync(workspace);
@@ -540,18 +597,23 @@ async function createAssetCommand(type: string, displayName?: string) {
 		// called directly
 		tickEvent("createasset");
 	}
+
 	AssetEditor.createOrShow();
+
 	AssetEditor.currentEditor?.createAssetAsync(type, displayName);
 }
 
 async function duplicateAssetCommand(node: JResTreeNode) {
 	tickEvent("duplicateAsset");
+
 	AssetEditor.createOrShow();
+
 	AssetEditor.currentEditor?.duplicateAssetAsync(node.kind, node.id!);
 }
 
 async function deleteAssetCommand(node: JResTreeNode) {
 	tickEvent("deleteAsset");
+
 	await deleteAssetAsync(node);
 }
 
@@ -583,6 +645,7 @@ async function createCommand() {
 	}
 
 	const qp = vscode.window.createQuickPick<TemplateQuickpick>();
+
 	qp.busy = true;
 
 	const options: TemplateQuickpick[] = [
@@ -592,6 +655,7 @@ async function createCommand() {
 	];
 
 	qp.placeholder = vscode.l10n.t("Choose a template for this project");
+
 	qp.items = options;
 
 	const getTemplateOptionsAsync = async () => {
@@ -653,6 +717,7 @@ async function createCommand() {
 				);
 
 				await vscode.commands.executeCommand("makecode.refreshAssets");
+
 				await vscode.commands.executeCommand(
 					"workbench.files.action.refreshFilesExplorer",
 				);
@@ -668,7 +733,9 @@ async function renameProjectAsync(
 	newName: string,
 ) {
 	const config = await getPxtJson(workspace);
+
 	config.name = newName;
+
 	await setPxtJson(workspace, config);
 }
 
@@ -677,7 +744,9 @@ async function openAssetEditor(
 	uri: vscode.Uri,
 ) {
 	tickEvent("openAsset");
+
 	AssetEditor.createOrShow();
+
 	AssetEditor.currentEditor?.openURIAsync(uri);
 }
 
@@ -696,8 +765,11 @@ async function shareCommandAsync() {
 		} catch (e) {
 			tickEvent("clipboard.failed");
 		}
+
 		const output = vscode.window.createOutputChannel("MakeCode");
+
 		output.show();
+
 		output.append(
 			vscode.l10n.t(
 				"Congratulations! Your project is shared at {0} and has been copied into your clipboard.",
@@ -709,7 +781,9 @@ async function shareCommandAsync() {
 
 export interface ExtensionInfo {
 	id: string;
+
 	label: string;
+
 	detail?: string;
 }
 
@@ -719,7 +793,9 @@ async function addDependencyCommandAsync() {
 	if (!workspace) {
 		return;
 	}
+
 	const qp = vscode.window.createQuickPick<ExtensionInfo>();
+
 	qp.busy = true;
 
 	let defaultPreferredExtensions: ExtensionInfo[] = [];
@@ -771,9 +847,12 @@ async function addDependencyCommandAsync() {
 				id: qp.value,
 				label: qp.value,
 			};
+
 			newQpItems.unshift(userEnteredSuggestion);
 		}
+
 		qp.items = newQpItems;
+
 		qp.busy = false;
 	};
 
@@ -782,6 +861,7 @@ async function addDependencyCommandAsync() {
 	/** await **/ getExtensionInfoAsync();
 
 	qp.items = defaultPreferredExtensions;
+
 	qp.placeholder = vscode.l10n.t(
 		"Enter the GitHub repo or name of the extension to add",
 	);
@@ -794,17 +874,22 @@ async function addDependencyCommandAsync() {
 					id: qp.value,
 					label: qp.value,
 				};
+
 				qp.items = [
 					userEnteredSuggestion,
 					...defaultPreferredExtensions,
 				].filter((el) => !!el.id);
 			}
 		});
+
 		qp.onDidAccept(() => {
 			const selected = qp.selectedItems[0] || qp.value;
+
 			qp.dispose();
+
 			resolve(selected?.id);
 		});
+
 		qp.show();
 	});
 
@@ -886,6 +971,7 @@ async function removeDependencyCommandAsync() {
 			await installDependenciesAsync(workspace);
 
 			await vscode.commands.executeCommand("makecode.refreshAssets");
+
 			await vscode.commands.executeCommand(
 				"workbench.files.action.refreshFilesExplorer",
 			);
@@ -943,6 +1029,7 @@ export function reportBuildErrors(res: CompileResult) {
 			message = d.messageText;
 		} else {
 			let diagnosticChain = d.messageText;
+
 			message = "";
 
 			let indent = 0;
@@ -955,8 +1042,11 @@ export function reportBuildErrors(res: CompileResult) {
 						message += "  ";
 					}
 				}
+
 				message += diagnosticChain.messageText;
+
 				indent++;
+
 				diagnosticChain = diagnosticChain.next!;
 			}
 		}
@@ -976,6 +1066,7 @@ export function reportBuildErrors(res: CompileResult) {
 
 	for (const filename of Object.keys(diagnostics)) {
 		const uri = vscode.Uri.joinPath(activeWorkspace().uri, filename);
+
 		diagnosticsCollection.set(uri, diagnostics[filename]);
 	}
 }
@@ -988,6 +1079,7 @@ export function tickEvent(
 	const baseProperties = {
 		"target": "arcade",
 	};
+
 	applicationInsights?.sendTelemetryEvent(
 		eventName,
 		{

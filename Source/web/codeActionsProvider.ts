@@ -39,6 +39,7 @@ export function codeActionsProvider() {
 							node.name === givenAssetName ||
 							node.id === givenAssetName,
 					);
+
 					output.push(
 						asset?.uri
 							? editCodeAction(asset, givenAssetName)

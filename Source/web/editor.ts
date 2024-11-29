@@ -17,36 +17,54 @@ const editorUrl = "https://arcade.makecode.com/?controller=1&skillmap=1";
 
 interface Header {
 	name: string;
+
 	meta: {};
+
 	editor: string;
+
 	pubId: string;
+
 	pubCurrent: boolean;
+
 	target: string;
+
 	targetVersion: string;
+
 	cloudUserId: string | null;
+
 	id: string;
+
 	recentUse: number;
+
 	modificationTime: number;
+
 	path: string;
+
 	cloudCurrent: boolean;
+
 	saveId: string | null;
+
 	extensionUnderTest?: string;
 }
 
 interface Project {
 	text: { [index: string]: string };
+
 	header: Header;
 }
 
 export class MakeCodeEditor {
 	public static readonly viewType = "mkcdeditor";
+
 	public static currentEditor: MakeCodeEditor | undefined;
+
 	public simStateTimer: any;
 
 	public static createOrShow() {
 		let column = vscode.window.activeTextEditor
 			? vscode.window.activeTextEditor.viewColumn
 			: vscode.ViewColumn.One;
+
 		column = column! < 9 ? column! + 1 : column;
 
 		if (MakeCodeEditor.currentEditor) {
@@ -77,6 +95,7 @@ export class MakeCodeEditor {
 
 	public static register(context: vscode.ExtensionContext) {
 		extensionContext = context;
+
 		vscode.window.registerWebviewPanelSerializer(
 			"mkcdeditor",
 			new MakeCodeEditorSerializer(),
@@ -88,17 +107,25 @@ export class MakeCodeEditor {
 	}
 
 	protected panel: vscode.WebviewPanel;
+
 	protected disposables: vscode.Disposable[];
+
 	protected pendingMessages: { [index: string]: (res: any) => void } = {};
+
 	protected nextId = 0;
 
 	protected running = false;
+
 	protected building = false;
+
 	protected buildPending = false;
 
 	protected watcherDisposable: vscode.Disposable | undefined;
+
 	protected folder: vscode.WorkspaceFolder | undefined;
+
 	protected extHeaderId: string | undefined;
+
 	protected testHeaderId: string | undefined;
 
 	constructor(panel: vscode.WebviewPanel) {
@@ -127,9 +154,11 @@ export class MakeCodeEditor {
 		if (this.running && this.folder === folder) {
 			return;
 		}
+
 		this.stop();
 
 		this.folder = folder;
+
 		this.running = true;
 
 		const debounceTimer = vscode.workspace
@@ -165,10 +194,15 @@ export class MakeCodeEditor {
 		};
 
 		fsWatcher.onDidChange(watchHandler);
+
 		fsWatcher.onDidCreate(watchHandler);
+
 		fsWatcher.onDidDelete(watchHandler);
+
 		this.watcherDisposable = fsWatcher;
+
 		extensionContext.subscriptions.push(this.watcherDisposable);
+
 		this.openTestProjectAsync();
 	}
 
@@ -177,6 +211,7 @@ export class MakeCodeEditor {
 
 		if (this.watcherDisposable) {
 			this.watcherDisposable.dispose();
+
 			this.watcherDisposable = undefined;
 		}
 	}
@@ -184,6 +219,7 @@ export class MakeCodeEditor {
 	handleEditorMessage(message: any) {
 		if (this.pendingMessages[message.id]) {
 			this.pendingMessages[message.id](message);
+
 			delete this.pendingMessages[message.id];
 
 			return;
@@ -211,11 +247,14 @@ export class MakeCodeEditor {
 			const testProject = await this.readTestProjectAsync(
 				this.folder || activeWorkspace(),
 			);
+
 			message.projects = [project];
 
 			if (testProject) {
 				this.extHeaderId = testProject.header.extensionUnderTest;
+
 				this.testHeaderId = testProject.header.id;
+
 				message.projects.push(testProject);
 			}
 
@@ -226,6 +265,7 @@ export class MakeCodeEditor {
 			}
 
 			message._fromVscode = true;
+
 			this.panel.webview.postMessage(message);
 		} else if (message.action === "workspacesave") {
 			const project = message.project as Project;
@@ -251,10 +291,12 @@ export class MakeCodeEditor {
 
 	sendMessageAsync(message: any) {
 		message._fromVscode = true;
+
 		message.id = this.nextId++;
 
 		return new Promise<any>((resolve) => {
 			this.pendingMessages[message.id] = resolve;
+
 			this.panel.webview.postMessage(message);
 		});
 	}
@@ -270,6 +312,7 @@ export class MakeCodeEditor {
 
 		if (testProject) {
 			this.testHeaderId = testProject.header.id;
+
 			this.extHeaderId = testProject.header.extensionUnderTest;
 		} else if (!this.extHeaderId) {
 			this.extHeaderId = guidGen();
@@ -285,6 +328,7 @@ export class MakeCodeEditor {
 			this.panel.webview,
 			hash,
 		);
+
 		this.panel.webview.html = simulatorHTML;
 	}
 
@@ -317,6 +361,7 @@ export class MakeCodeEditor {
 		if (await fileExistsAsync(uri)) {
 			return JSON.parse(await readTextFileAsync(uri));
 		}
+
 		return undefined;
 	}
 
@@ -325,6 +370,7 @@ export class MakeCodeEditor {
 		project: Project,
 	) {
 		const uri = vscode.Uri.joinPath(workspace.uri, ".pxt", "test_project");
+
 		await writeTextFileAsync(uri, JSON.stringify(project));
 	}
 }
@@ -376,6 +422,7 @@ async function createProjectBlobAsync(workspace: vscode.WorkspaceFolder) {
 			const contents = await readTextFileAsync(
 				vscode.Uri.joinPath(workspace.uri, file),
 			);
+
 			project[file] = contents;
 		} catch (e) {
 			project[file] = "";

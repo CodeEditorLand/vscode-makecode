@@ -8,13 +8,18 @@ let extensionContext: vscode.ExtensionContext;
 
 export class Simulator {
 	public static readonly viewType = "mkcdsim";
+
 	public static currentSimulator: Simulator | undefined;
+
 	public simState: any;
+
 	public simStateTimer: any;
+
 	private static simconsole: vscode.OutputChannel;
 
 	public static register(extCtx: vscode.ExtensionContext) {
 		extensionContext = extCtx;
+
 		vscode.window.registerWebviewPanelSerializer(
 			"mkcdsim",
 			new SimulatorSerializer(extCtx),
@@ -33,6 +38,7 @@ export class Simulator {
 
 		if (Simulator.currentSimulator) {
 			Simulator.currentSimulator.simState = null;
+
 			Simulator.currentSimulator.panel.reveal(
 				undefined /** keep current column **/,
 				true,
@@ -63,7 +69,9 @@ export class Simulator {
 	}
 
 	protected panel: vscode.WebviewPanel;
+
 	protected binaryJS: string | undefined;
+
 	protected disposables: vscode.Disposable[];
 
 	private constructor(panel: vscode.WebviewPanel) {
@@ -86,6 +94,7 @@ export class Simulator {
 
 	async simulateAsync(binaryJS: string) {
 		this.binaryJS = binaryJS;
+
 		this.panel.webview.html = "";
 
 		const simulatorHTML = await getSimHtmlAsync();
@@ -96,6 +105,7 @@ export class Simulator {
 				{},
 			);
 		}
+
 		this.panel.webview.html = simulatorHTML;
 	}
 
@@ -125,6 +135,7 @@ export class Simulator {
 				for (const entry of data) {
 					Simulator.simconsole.appendLine(entry.data);
 				}
+
 				break;
 
 			case "debugger":
@@ -137,12 +148,16 @@ export class Simulator {
 
 					for (let s of message.stackframes) {
 						let fi = s.funcInfo;
+
 						stackTrace += `   at ${fi.functionName} (${
 							fi.fileName
 						}:${fi.line + 1}:${fi.column + 1})\n`;
 					}
+
 					Simulator.simconsole.appendLine(stackTrace);
+
 					Simulator.simconsole.show(false);
+
 					this.stopSimulator();
 				}
 		}
@@ -150,6 +165,7 @@ export class Simulator {
 
 	postMessage(msg: any) {
 		msg._fromVscode = true;
+
 		this.panel.webview.postMessage(msg);
 	}
 
@@ -160,11 +176,13 @@ export class Simulator {
 
 export class SimulatorSerializer implements vscode.WebviewPanelSerializer {
 	constructor(public context: vscode.ExtensionContext) {}
+
 	async deserializeWebviewPanel(
 		webviewPanel: vscode.WebviewPanel,
 		state: unknown,
 	) {
 		Simulator.revive(webviewPanel);
+
 		await simulateCommand(this.context);
 	}
 }
@@ -215,6 +233,7 @@ async function getSimHtmlAsync() {
             </script>
             `;
 				}
+
 				return "";
 			},
 		)

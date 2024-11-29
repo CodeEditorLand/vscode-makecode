@@ -38,6 +38,7 @@ async function createShareLinkRequestAsync(workspace: vscode.WorkspaceFolder) {
 		const content = await readTextFileAsync(
 			vscode.Uri.joinPath(workspace.uri, file),
 		);
+
 		files[file] = content;
 	}
 
