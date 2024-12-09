@@ -319,7 +319,7 @@
 	},
 	"displayName": "Microsoft MakeCode Arcade",
 	"icon": "media/logo-128x128.png",
-	"name": "pxt-vscode-web",
+	"name": "pxt-@codeeditorland/web",
 	"preview": true,
 	"scripts": {
 		"compile-web": "webpack",
