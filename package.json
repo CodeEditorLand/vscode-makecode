@@ -1,5 +1,5 @@
 {
-	"name": "pxt-@codeeditorland/web",
+	"name": "pxt-vscode-web",
 	"displayName": "Microsoft MakeCode Arcade",
 	"description": "Make games and learn code. Create retro arcade style video games, art, and music inside VS Code.",
 	"browser": "./dist/web/extension.js",
